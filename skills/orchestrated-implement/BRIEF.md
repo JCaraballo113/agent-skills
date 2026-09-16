@@ -1,6 +1,6 @@
 # Implementer brief
 
-The prompt each implementer receives, filled in per ticket. The implementer starts with nothing but this brief, so it carries **pointers** — the ticket, the spec sections, the files to read, the ownership map — never the material itself. When the orchestrator implements inline, it runs the **implement loop** paragraph itself.
+The prompt each implementer receives, filled in per ticket. The implementer starts with nothing but this brief, so the brief is a handoff: whatever an artifact already holds — spec, issue, ADR, design frame, README, commit, diff — goes in as a path or URL, never restated; whatever only this run decided goes in as a sentence, since no artifact has it yet; anything sensitive stays out. When the orchestrator implements inline, it runs the **implement loop** paragraph itself.
 
 ```
 You are the implementer for ticket <ID> "<title>" in your own git worktree,
@@ -26,6 +26,13 @@ answers so you can resume.
 
 Read first: <ticket>, <spec sections>, <design of record>, <engineering
 docs that pin decisions>.
+
+Decided in this run, not yet in the repo: <seams agreed between tickets,
+the exact signature a sibling will consume, calls the user made>.
+
+Skills to invoke: /tdd for the loop; <the project's design skill> before
+any screen; <the doc-writing skill> before any README or doc edit; <what
+else the repo's rules require>.
 
 Scope, exactly <ID>: <the ticket's "what to build" in one paragraph, with
 what is explicitly not yours and which ticket owns it>.

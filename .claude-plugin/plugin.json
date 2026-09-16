@@ -1,7 +1,7 @@
 {
   "name": "john-superpowers",
   "description": "Personal collection of Claude Code skills \u2014 PR workflows (open, triage, status), intent-driven project bootstrap (taste + stack modules), teaching sessions, UX bridging, design cleanup, and self-contained HTML artifacts.",
-  "version": "2.22.0",
+  "version": "2.22.1",
   "author": {
     "name": "John Caraballo",
     "email": "jcaraballo.dev@gmail.com"
