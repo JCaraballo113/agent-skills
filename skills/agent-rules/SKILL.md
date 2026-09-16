@@ -1,6 +1,6 @@
 ---
 name: agent-rules
-description: Encode working conventions as one rule file per concern in .claude/rules/ — testing (TDD, happy/negative path, coverage as discovery), migrations, design-system (atomic design vocabulary, content extremes, motion), code-review, coding-standard-updates (a judgment-level CODING_STANDARDS.md canon, gated by a five-point style-vs-decision test, every entry standing on its own), subagent-model-tiering (advisory escalation, parallel safety), improve-the-territory (leave touched code better than found), finding-unknowns, agent-summaries (debrief, not changelog) — generalized to the project at hand, any ecosystem. Use when the user says "setup agent rules", "encode the agent rules", or invokes setup-tooling.
+description: Encode working conventions as one rule file per concern in .claude/rules/ — testing (TDD, happy/negative path, coverage as discovery), migrations, design-system (atomic design vocabulary, content extremes, motion), code-review, coding-standard-updates (a judgment-level CODING_STANDARDS.md canon, gated by a five-point style-vs-decision test, every entry standing on its own), subagent-model-tiering (advisory escalation, parallel safety), improve-the-territory (leave touched code better than found), agent-summaries (debrief, not changelog) — generalized to the project at hand, any ecosystem. Use when the user says "setup agent rules", "encode the agent rules", or invokes setup-tooling.
 ---
 
 # Agent Rules
@@ -18,7 +18,7 @@ Some rules gate on a skill being installed. The **installed-check** —
 inline this wording into each generated rule that uses it, so the rule
 stands alone in the target repo: *the skill counts as installed when it
 appears in the available-skills list in any scope — global, project, or
-plugin — possibly namespaced (e.g. `john-superpowers:finding-unknowns`);
+plugin — possibly namespaced (e.g. `mattpocock-skills:tdd`);
 a name match under any namespace counts, and the list beats guessing
 filesystem paths.*
 
@@ -49,8 +49,6 @@ The rules:
 - [`improve-the-territory.md`](./rules/improve-the-territory.md) (every
   project) — existing code is precedent, not gospel; leave touched
   patterns better than found.
-- [`finding-unknowns.md`](./rules/finding-unknowns.md) (every project)
-  — map the unknowns before non-trivial features.
 - [`agent-summaries.md`](./rules/agent-summaries.md) (every project) —
   reports to a human are debriefs, not changelogs: outcome first,
   effects over internals, "done" / "needs you" / "caveats" kept
