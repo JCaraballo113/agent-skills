@@ -50,9 +50,10 @@ The rules:
   project) — existing code is precedent, not gospel; leave touched
   patterns better than found.
 - [`agent-summaries.md`](./rules/agent-summaries.md) (every project) —
-  reports to a human are debriefs, not changelogs: outcome first,
-  effects over internals, "done" / "needs you" / "caveats" kept
-  separate.
+  reports to a human are debriefs, not changelogs: outcome first, in
+  ASD-STE100 Simplified Technical English with the project's ubiquitous
+  language, effects over internals, "done" / "needs you" / "caveats"
+  kept separate.
 
 When installing these rules, if a skill in
 [skill.deps.json](./skill.deps.json) isn't installed, prompt the user to
