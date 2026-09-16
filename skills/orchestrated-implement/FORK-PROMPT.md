@@ -10,15 +10,14 @@ worktree's branch, never push, never touch the main checkout or its branch.
 Sibling forks are implementing <other IDs> in parallel from the same base;
 landing order is <order>, so expect to be rebased — keep edits to the shared
 files additive. `node_modules` in your worktree is a symlink to the main
-checkout's: never run an install there. If your ticket needs a new
-dependency, remove the symlink first, install a real tree, and say so in
-your report.
+checkout's, ready to use; a new dependency gets a real tree — remove the
+symlink, install, and say so in your report.
 
 The implement loop: use /tdd where possible, at the project's pre-agreed
 seams (<seams>); run typechecking regularly, single test files regularly,
 and the full test suite once at the end; commit your work to the
-worktree's branch. Do not run /code-review — the orchestrator reviews your
-diff against <BASE SHA> at landing. Keep every repo rule
+worktree's branch and report — the orchestrator reviews your diff against
+<BASE SHA> at landing. Keep every repo rule
 (<the rules that bite here>). Skills that interview the user cannot in this run: do only
 their verify-against-the-code pass and log every open question as a
 judgment call in your report instead of blocking.

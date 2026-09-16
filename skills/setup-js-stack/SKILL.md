@@ -49,13 +49,10 @@ pnpm is the package manager — not npm, not yarn, in the repo and in CI.
 
 ```yaml
 minimumReleaseAge: 1440   # a version must be ≥1 day old to install
-verifyDepsBeforeRun: false # linked worktrees share node_modules (see the post-checkout hook)
+verifyDepsBeforeRun: false # a linked worktree's symlinked node_modules fails pnpm's pre-run check and triggers a reinstall
 ```
 
-  `verifyDepsBeforeRun` is pnpm's pre-run check that `node_modules` was
-  built for this directory; a linked worktree's symlinked tree fails it
-  and triggers an implicit reinstall, so it is off and `pnpm install`
-  runs by hand after a lockfile change (CI installs explicitly anyway).
+  With the check off, `pnpm install` runs by hand after a lockfile change.
   pnpm 11 reads this from `pnpm-workspace.yaml`, not `.npmrc`.
 
 - Scripts: `dev`, `build`, `test` (`vitest run`), `test:watch`,
@@ -90,10 +87,8 @@ installs its hooks on `pnpm install`). Committed `lefthook.yml`:
 - **post-checkout** — `bash scripts/worktree-node-modules.sh`: a linked
   worktree (`git worktree add`, or an agent's `isolation: "worktree"`)
   borrows the main checkout's `node_modules` by symlink instead of a
-  per-tree install that costs minutes each. Git runs `post-checkout` after
-  `git worktree add`, so every creator gets it. The script is a no-op in
-  the main checkout, when `node_modules` already exists, or when there is
-  nothing to borrow:
+  per-tree install that costs minutes each; git runs `post-checkout` after
+  `git worktree add`, so every creator gets it:
 
 ```bash
 #!/usr/bin/env bash
@@ -107,12 +102,11 @@ here="$(git rev-parse --show-toplevel)"
 ln -s "$main/node_modules" "$here/node_modules"
 ```
 
-  `pnpm add` inside a linked worktree refuses
-  (`ERR_PNPM_UNEXPECTED_VIRTUAL_STORE`) and touches neither side; a
-  worktree that needs a new dependency removes the symlink and installs
-  its own tree. If agent worktrees live inside the repo
-  (`.claude/worktrees/`), that directory goes in `.gitignore` and the
-  linter's ignores, or the main checkout's lint walks into every one.
+  A new dependency in a linked worktree gets a real tree — remove the
+  symlink, then install (`pnpm add` through the link refuses with
+  `ERR_PNPM_UNEXPECTED_VIRTUAL_STORE` and touches neither side). Agent
+  worktrees inside the repo (`.claude/worktrees/`) go in `.gitignore` and
+  the linter's ignores, or the main checkout's lint walks into every one.
 
 It's a tripwire, not a sandbox — `git commit --no-verify` bypasses it — so
 the same checks run in CI, the backstop that can't be skipped: a local
