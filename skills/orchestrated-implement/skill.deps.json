@@ -1,0 +1,10 @@
+{
+  "tdd": "npx skills add https://github.com/mattpocock/skills --skill tdd",
+  "code-review": "npx skills add https://github.com/mattpocock/skills --skill code-review",
+  "resolving-merge-conflicts": "npx skills add https://github.com/mattpocock/skills --skill resolving-merge-conflicts",
+  "git": {
+    "darwin": "brew install git",
+    "linux": "sudo apt install git",
+    "win32": "winget install Git.Git"
+  }
+}
