@@ -8,7 +8,7 @@ disable-model-invocation: true
 
 You are the **orchestrator**, not an implementer. Each ticket goes to its own fork in its own worktree; you verify they can run in parallel, land them in order, and put fresh eyes on the result. The deliverable is the tickets landed on the current branch with every check green and one report.
 
-The **implement loop** — TDD at pre-agreed seams, typecheck and single test files as you go, the full suite once at the end, `/code-review`, commit — is spelled out in [FORK-PROMPT.md](./FORK-PROMPT.md); every implementer, fork or inline, runs it.
+The **implement loop** — TDD at pre-agreed seams, typecheck and single test files as you go, the full suite once at the end, commit — is spelled out in [FORK-PROMPT.md](./FORK-PROMPT.md); every implementer, fork or inline, runs it. Review is the orchestrator's: each diff at landing (step 4) and the whole landing once (step 5); a fork never runs `/code-review`.
 
 Preflight: the skills in [skill.deps.json](./skill.deps.json) are installed — prompt the user with the install command for any that isn't.
 

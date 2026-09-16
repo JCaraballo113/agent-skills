@@ -16,9 +16,9 @@ your report.
 
 The implement loop: use /tdd where possible, at the project's pre-agreed
 seams (<seams>); run typechecking regularly, single test files regularly,
-and the full test suite once at the end; once done, run /code-review with
-fixed point <BASE SHA> and fix its findings; commit your work to the
-worktree's branch. Keep every repo rule
+and the full test suite once at the end; commit your work to the
+worktree's branch. Do not run /code-review — the orchestrator reviews your
+diff against <BASE SHA> at landing. Keep every repo rule
 (<the rules that bite here>). Skills that interview the user cannot in this run: do only
 their verify-against-the-code pass and log every open question as a
 judgment call in your report instead of blocking.
@@ -35,7 +35,6 @@ fork's owned files>.
 
 Final report (this is all the orchestrator sees): worktree branch and
 commit SHAs; files added and changed; every judgment call and open
-question; anything deferred and to which ticket; both code-review axes'
-findings and what you did with each; final typecheck, lint and test counts
-and coverage on your files.
+question; anything deferred and to which ticket; final typecheck, lint and
+test counts and coverage on your files.
 ```
