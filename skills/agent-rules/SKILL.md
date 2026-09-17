@@ -1,6 +1,6 @@
 ---
 name: agent-rules
-description: Encode working conventions as one rule file per concern in .claude/rules/ — testing (TDD, happy/negative path, coverage as discovery), migrations, design-system (atomic design vocabulary, content extremes, motion), voice (one copy table per surface, a guard test with a banned list), code-review, coding-standard-updates (a judgment-level CODING_STANDARDS.md canon, gated by a five-point style-vs-decision test, every entry standing on its own), subagent-model-tiering (advisory escalation, parallel safety), improve-the-territory (leave touched code better than found), agent-summaries (debrief, not changelog) — generalized to the project at hand, any ecosystem. Use when the user says "setup agent rules", "encode the agent rules", or invokes setup-tooling.
+description: Encode working conventions as one rule file per concern in .claude/rules/ — testing (TDD, happy/negative path, coverage as discovery), migrations, design-system (atomic design vocabulary, content extremes, motion), voice (one copy table per surface, a guard test with a banned list), round-trips (independent reads go out together, batchable reads batch), code-review, coding-standard-updates (a judgment-level CODING_STANDARDS.md canon, gated by a five-point style-vs-decision test, every entry standing on its own), subagent-model-tiering (advisory escalation, parallel safety), improve-the-territory (leave touched code better than found), agent-summaries (debrief, not changelog) — generalized to the project at hand, any ecosystem. Use when the user says "setup agent rules", "encode the agent rules", or invokes setup-tooling.
 ---
 
 # Agent Rules
@@ -37,6 +37,10 @@ The rules:
 - [`voice.md`](./rules/voice.md) (projects with client-visible copy) —
   one copy table per surface, vocabulary from the domain doc, and a guard
   test that renders every entry and refuses the banned list.
+- [`round-trips.md`](./rules/round-trips.md) (projects that read over a
+  network) — count a flow's round trips: independent reads go out
+  together, batchable reads go through the batcher, and a read that waits
+  carries its reason.
 - [`code-review.md`](./rules/code-review.md) (every project) — run
   `/code-review` and fix findings before every commit.
 - [`coding-standard-updates.md`](./rules/coding-standard-updates.md) (every

@@ -57,7 +57,15 @@ command from [skill.deps.json](./skill.deps.json).
    provenance comments; `scripts/**` keeps size, params, complexity,
    magic numbers and console. Shell scripts stay unlinted — their header
    comments carry the method.
-5. **Hard constraints**, one sentence each, into the agent docs and the
+5. **Round trips.** Chain reads batch through a multicall contract **per
+   chain**: reads on one chain go through it, reads on two chains never
+   share one, and the node methods (`eth_getTransactionReceipt`,
+   `eth_getBlockByNumber`, `eth_getCode`) are not `eth_call`s and join no
+   batch at all. Reads that cannot batch but depend on nothing are issued
+   together instead, and each flow's round-trip count lives in the
+   `README.md` beside it — the `round-trips` rule
+   (`/john-superpowers:agent-rules`) is the general form.
+6. **Hard constraints**, one sentence each, into the agent docs and the
    rule files `/john-superpowers:agent-rules` writes: no success state
    before an on-chain receipt; amounts parsed at the boundary, never
    trusted for shape; missing price or USD data renders as "—", never
@@ -72,8 +80,9 @@ command from [skill.deps.json](./skill.deps.json).
 `src/lib/web3/` holds the networks, the vendored ABIs with their
 provenance table, and the revert selectors a test pins; the guardrails
 config carries the exemptions; a component renders through the fixture
-transport in the `dom` project; and every hard constraint reads back in
-the agent docs. Against deployed contracts, `fork:smoke` has also run
+transport in the `dom` project; every flow that reads the chain states its
+round-trip count; and every hard constraint reads back in the agent
+docs. Against deployed contracts, `fork:smoke` has also run
 green and its output is in the report, and the runbook section walks a
 human through the trial end to end — report those two as waiting when
 there is no address yet.
