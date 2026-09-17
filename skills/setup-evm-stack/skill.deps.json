@@ -1,0 +1,7 @@
+{
+  "foundry": {
+    "darwin": "curl -L https://foundry.paradigm.xyz | bash && foundryup",
+    "linux": "curl -L https://foundry.paradigm.xyz | bash && foundryup",
+    "win32": "Run foundryup inside WSL (curl -L https://foundry.paradigm.xyz | bash && foundryup); anvil and cast are Linux binaries"
+  }
+}

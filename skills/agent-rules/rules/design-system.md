@@ -26,7 +26,7 @@ Every designed screen and every implemented view gets exercised with the content
 
 Extremes that break move the fix down to the molecule that owns it, not a page-level patch.
 
-Mock repeated and data-driven content in the design file with Pencil code-on-canvas Script nodes (https://docs.pencil.dev/core-concepts/code-on-canvas) — generated from data, not hand-duplicated layers, converting to editable layers only when a mock needs hand-tuning.
+Mock repeated and data-driven content in the design file from instances driven by real values — read from the live system, not invented, and generated rather than hand-duplicated — so a mock that cannot happen is caught in design; the design tool's mechanics are the design-tooling skill's.
 
 ## Motion
 

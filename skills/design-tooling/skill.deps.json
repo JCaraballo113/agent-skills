@@ -1,4 +1,5 @@
 {
   "impeccable": "npx skills add https://github.com/pbakaus/impeccable --skill impeccable",
-  "pencil-mcp": "Install the Pencil editor + MCP from https://www.pencil.dev/, then reconnect the session"
+  "pencil-mcp": "Install the Pencil editor + MCP from https://www.pencil.dev/, then reconnect the session",
+  "figma-mcp": "Claude Code: /plugin install figma@claude-plugins-official, authenticate the Figma MCP when prompted, then reconnect the session"
 }

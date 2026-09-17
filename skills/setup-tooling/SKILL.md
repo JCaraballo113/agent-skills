@@ -1,6 +1,6 @@
 ---
 name: setup-tooling
-description: Bootstrap a project with my preferred tooling. Drives an intent interview first (ecosystem, platform, project type, frontend, database, existing code), then composes the matching modules — a per-platform stack (JS/TS web via setup-js-stack, Expo/React Native mobile via setup-expo-stack), lint-guardrails, design-tooling, and agent-rules. Use when the user says "setup tooling", "bootstrap this project", "scaffold my stack", "set up a mobile/expo app", or starts a fresh repo.
+description: Bootstrap a project with my preferred tooling. Drives an intent interview first, then composes the matching modules — a per-platform stack (JS/TS web via setup-js-stack, Expo/React Native mobile via setup-expo-stack), lint-guardrails, setup-evm-stack for on-chain web projects, design-tooling, and agent-rules. Use when the user says "setup tooling" or "bootstrap this project", sets up a mobile/expo app, or starts a fresh repo.
 ---
 
 # Setup Tooling
@@ -22,10 +22,14 @@ Ask up front (AskUserQuestion works well); don't guess:
 3. **Project type** — for web: full-stack app, SPA, backend/API, library,
    CLI; for mobile: an Expo app (± API routes/backend). The stack module
    maps type → scaffold.
-4. **Frontend?** — decides design tooling. Mobile apps always have one.
+4. **Frontend?** — decides design tooling and which **design tool**
+   (Pencil or Figma). Mobile apps always have one.
 5. **Database?** — decides the DB portion of the stack module (on mobile,
    the backend-per-project decision).
-6. **Existing code?** — never re-scaffold over existing work; layer the
+6. **On-chain contracts?** — a web frontend that reads and writes EVM
+   contracts through the user's wallet takes `setup-evm-stack` as a layer
+   over the web stack.
+7. **Existing code?** — never re-scaffold over existing work; layer the
    missing pieces instead.
 
 ## 2. Compose modules
@@ -37,9 +41,12 @@ In order, skipping what intent ruled out:
    web+mobile monorepo. Framework, package-manager baseline, database, CI.
    JS/TS only.
 2. `/john-superpowers:lint-guardrails` — every project, any ecosystem.
-3. `/john-superpowers:design-tooling` — frontend projects only.
-4. `/john-superpowers:agent-rules` — every project.
-5. If `setup-matt-pocock-skills` appears in the available-skills list
+3. `/john-superpowers:setup-evm-stack` — on-chain web projects only; it
+   adds exemptions to the guardrails config, so it lands on top of one.
+4. `/john-superpowers:design-tooling` — frontend projects only, with the
+   design tool from intent.
+5. `/john-superpowers:agent-rules` — every project.
+6. If `setup-matt-pocock-skills` appears in the available-skills list
    (any scope, possibly namespaced), invoke it to layer the
    agent-workflow conventions (issue tracker, triage labels, domain
    docs) on top of the fresh tooling. If not, skip silently — don't
