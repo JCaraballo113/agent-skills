@@ -5,18 +5,32 @@ The JS/TS instantiation of the guardrail philosophy in
 
 ## The rules
 
-Flat config only. Install `eslint-plugin-no-comments` (dev dep) and layer
-this on the repo's framework base config:
+Flat config only. Install `eslint-plugin-no-comments` and
+`eslint-plugin-sonarjs` (dev deps) and layer this on the repo's framework
+base config:
 
 ```js
 import noComments from "eslint-plugin-no-comments";
+import sonarjs from "eslint-plugin-sonarjs";
+
+const LOOP =
+  ":matches(ForStatement, ForOfStatement, ForInStatement, WhileStatement, DoWhileStatement)";
 
 const guardrails = {
   "max-lines": ["error", { max: 250, skipBlankLines: true }],
   "max-lines-per-function": ["error", { max: 50, skipBlankLines: true }],
   "max-statements": ["error", 20],
   complexity: ["error", 10],
-  "max-depth": ["error", 4],
+  "sonarjs/cognitive-complexity": ["error", 10],
+  "max-depth": ["error", 3],
+  "no-restricted-syntax": [
+    "error",
+    {
+      selector: `${LOOP} ${LOOP}`,
+      message:
+        "A loop inside a loop: extract the inner loop into a named function, or reshape the data so one flatMap walks it.",
+    },
+  ],
   "max-params": ["error", 3],
   "max-classes-per-file": ["error", 1],
   "no-magic-numbers": [
@@ -33,7 +47,7 @@ const guardrails = {
   "no-console": ["error", { allow: ["error", "warn"] }],
 };
 
-// { name: "ai-guardrails", plugins: { "no-comments": noComments },
+// { name: "ai-guardrails", plugins: { "no-comments": noComments, sonarjs },
 //   rules: { ...guardrails, "no-comments/disallowComments": "error" } }
 ```
 
@@ -45,8 +59,18 @@ Deliberate deviations from the article, learned in practice:
 - **`max-lines-per-function: 120` for `.tsx`** (50 elsewhere) — JSX inflates
   line counts without adding logic; `complexity` and `max-statements` still
   apply at full strength there.
-- **No plugin presets** — skip the article's `sonarjs`/`unicorn`/`security`
-  recommended configs. This rule set is the whole system.
+- **Nesting is capped three ways, because cyclomatic complexity cannot see
+  it.** `complexity` counts branches, so three nested loops score the same
+  as three loops in a row. `sonarjs/cognitive-complexity` (one rule from
+  the plugin, at the same 10 as `complexity`) adds a penalty per nesting
+  level; `max-depth: 3` bounds block nesting outright; and the
+  `no-restricted-syntax` selector names the one shape that always reads
+  badly, a loop directly inside a loop, with the fix in its message. A
+  nested walk over a data shape is the tell that the shape wants a type
+  and a `flatMap`.
+- **No plugin presets** — one named rule from `sonarjs`, never its
+  `recommended` config, and none of `unicorn`/`security`. This rule set is
+  the whole system.
 
 Scoped exemptions (separate flat-config blocks):
 
