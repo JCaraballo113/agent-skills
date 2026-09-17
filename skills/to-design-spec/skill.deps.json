@@ -1,4 +1,0 @@
-{
-  "setup-matt-pocock-skills": "npx skills add https://github.com/mattpocock/skills --skill setup-matt-pocock-skills",
-  "pencil-mcp": "Install the Pencil editor + MCP from https://www.pencil.dev/, then reconnect the session"
-}
