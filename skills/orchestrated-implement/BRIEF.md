@@ -3,14 +3,15 @@
 The prompt each implementer receives, filled in per ticket. The implementer starts with nothing but this brief, so the brief is a handoff: whatever an artifact already holds — spec, issue, ADR, design frame, README, commit, diff — goes in as a path or URL, never restated; whatever only this run decided goes in as a sentence, since no artifact has it yet; anything sensitive stays out. When the orchestrator implements inline, it runs the **implement loop** paragraph itself.
 
 ```
-You are the implementer for ticket <ID> "<title>" in your own git worktree,
-cut from <BASE SHA> on <branch>. Execute directly. Work only inside your
-worktree, commit there on the worktree's branch, never push, never touch
-the main checkout or its branch. Sibling implementers are working on
-<other IDs> in parallel from the same base; landing order is <order>, so
-expect to be rebased — keep edits to the shared files additive. `node_modules` in your worktree is a symlink to the main
-checkout's, ready to use; a new dependency gets a real tree — remove the
-symlink, install, and say so in your report.
+You are the implementer for ticket <ID> "<title>" in the worktree at
+<path>, on branch <impl branch>, cut from <BASE SHA> on <branch>; its
+`node_modules` is linked and the typecheck is green there. Execute
+directly. Work only inside that worktree, commit there on its branch,
+never push, never touch the main checkout or its branch. Sibling
+implementers are working on <other IDs> in parallel from the same base;
+landing order is <order>, so expect to be rebased — keep edits to the
+shared files additive. A new dependency gets a real tree — remove the
+`node_modules` link, install, and say so in your report.
 
 The implement loop: use /tdd where possible, at the project's pre-agreed
 seams (<seams>); run typechecking regularly, single test files regularly,
