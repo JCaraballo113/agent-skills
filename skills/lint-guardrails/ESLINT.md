@@ -75,9 +75,12 @@ Deliberate deviations from the article, learned in practice:
 Scoped exemptions (separate flat-config blocks):
 
 - **Vendored/generated code** (e.g. shadcn `components/ui/**`): size,
-  complexity, magic-number, and comment rules off. Correctness rules stay.
-- **`tests/**`, `scripts/**`**: size/params/complexity/magic-number/console
-  off — specs assert literals, describe blocks are one long function.
+  complexity (cyclomatic and cognitive), `max-depth`, the loop selector,
+  magic-number, and comment rules off. Correctness rules stay.
+- **`tests/**`, `scripts/**`**: size/params/complexity (cyclomatic and
+  cognitive)/magic-number/console off — specs assert literals, describe
+  blocks are one long function. `max-depth` and the loop selector stay
+  on: a spec nested four deep reads no better than any other code.
   Comments stay banned; test names carry intent.
 - **Root `*.config.*` files**: comments allowed, everything else applies.
 
