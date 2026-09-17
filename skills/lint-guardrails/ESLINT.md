@@ -58,7 +58,13 @@ Deliberate deviations from the article, learned in practice:
   own functions still prefer a single object param.
 - **`max-lines-per-function: 120` for `.tsx`** (50 elsewhere) — JSX inflates
   line counts without adding logic; `complexity` and `max-statements` still
-  apply at full strength there.
+  apply at full strength there. The same `.tsx` block carries the one React
+  rule worth taking from `sonarjs`, `"sonarjs/jsx-no-leaked-render":
+  "error"` — `{count && <Row />}` renders a literal `0`, which neither the
+  framework config nor TypeScript refuses. Every other React and hooks rule
+  comes from the framework's own config (`eslint-config-next`, the
+  `react-hooks` set); `sonarjs`'s remaining React rules duplicate those or
+  are style.
 - **Nesting is capped three ways, because cyclomatic complexity cannot see
   it.** `complexity` counts branches, so three nested loops score the same
   as three loops in a row. `sonarjs/cognitive-complexity` (one rule from
