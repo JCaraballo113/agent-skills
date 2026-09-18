@@ -1,6 +1,6 @@
 ---
 name: agent-rules
-description: Encode working conventions as one rule file per concern in .claude/rules/ — testing (TDD, happy/negative path, coverage as discovery), migrations, design-system (atomic design vocabulary, content extremes, motion), voice (one copy table per surface, a guard test with a banned list), round-trips (independent reads go out together, batchable reads batch), code-review, coding-standard-updates (a judgment-level CODING_STANDARDS.md canon, gated by a five-point style-vs-decision test, every entry standing on its own), subagent-model-tiering (advisory escalation, parallel safety), improve-the-territory (leave touched code better than found), agent-summaries (debrief, not changelog) — generalized to the project at hand, any ecosystem. Use when the user says "setup agent rules", "encode the agent rules", or invokes setup-tooling.
+description: Encode working conventions as one rule file per concern in .claude/rules/ — testing (TDD, happy/negative path, coverage as discovery), migrations, design-system (atomic design vocabulary, content extremes, motion), voice (one copy table per surface, a guard test with a banned list), round-trips (independent reads go out together, batchable reads batch), guarded-state (the guard belongs to the state not the control that first enforced it; a new control inherits nothing, the second call site means the guard is in the wrong place), code-review, coding-standard-updates (a judgment-level CODING_STANDARDS.md canon, gated by a five-point style-vs-decision test, every entry standing on its own), subagent-model-tiering (advisory escalation, parallel safety), improve-the-territory (leave touched code better than found), agent-summaries (debrief, not changelog) — generalized to the project at hand, any ecosystem. Use when the user says "setup agent rules", "encode the agent rules", or invokes setup-tooling.
 ---
 
 # Agent Rules
@@ -41,6 +41,12 @@ The rules:
   network) — count a flow's round trips: independent reads go out
   together, batchable reads go through the batcher, and a read that waits
   carries its reason.
+- [`guarded-state.md`](./rules/guarded-state.md) (projects with state a
+  person must not be moved out of freely — a request in flight, an unsaved
+  edit, a flow mid-way) — the guard belongs to the state, not to the control
+  that first enforced it: a new control inherits nothing, the second call
+  site means the guard is in the wrong place, and the invariant is pinned
+  once per control that can violate it.
 - [`code-review.md`](./rules/code-review.md) (every project) — run
   `/code-review` and fix findings before every commit.
 - [`coding-standard-updates.md`](./rules/coding-standard-updates.md) (every
