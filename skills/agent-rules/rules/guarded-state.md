@@ -15,6 +15,12 @@ The source is wherever the *capability* lives, not where the button is. Ask what
 
 Prefer a fact the platform already tracks over one the project publishes itself: a library that already knows the state — a mutation registry, a form's dirty flag, a router's navigation blocker — beats a bespoke context, because it covers the controls nobody has written yet.
 
+## Express the guard as a required decision
+
+An optional guard is a question the compiler declines to ask, and opt-in guards are the ones forgotten at the second call site. Where a control takes the guard as a prop, make it **required** rather than defaulted: every new instance then has to state its answer, at exactly the moment the mistake gets made. It costs nothing at the call sites that already pass it, and converts a class of runtime defect into a compile error.
+
+Where the capability is a function rather than a prop, put the refusal inside it and forbid reaching past it — a restricted-import rule naming the raw capability and allowing it only in the module that wraps it. That will not catch the control that goes through neither, which is what the spec-per-control discipline above is for.
+
 ## Pinning it
 
 Pin the invariant **once per control that can violate it**, not once per bug. A test written against the control that prompted the fix passes while the next control ships the same defect. When a fix adds a guard, the test names the state and the observable refusal, and the list of controls is the thing that grows.
