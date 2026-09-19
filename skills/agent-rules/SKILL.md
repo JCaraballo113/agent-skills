@@ -1,6 +1,6 @@
 ---
 name: agent-rules
-description: Encode checked-in agent conventions by concern — testing (TDD, happy/negative path, coverage as discovery), migrations, design-system (atomic design vocabulary, content extremes, motion), voice (a copy table per surface, a banned-list guard), round-trips, guarded state, code review, coding standards, subagent model tiering, improve-the-territory, and agent summaries — generalized to the project at hand in the host's native instruction format. Use when the user says "setup agent rules", "encode the agent rules", or invokes setup-tooling.
+description: Encode checked-in agent conventions by concern — testing, migrations, design system, voice, round trips, guarded state, intent before mechanism, code review, coding standards, subagent model tiering, improve-the-territory, and agent summaries — generalized to the project at hand in the host's native instruction format. Use when the user says "setup agent rules", "encode the agent rules", or invokes setup-tooling.
 ---
 
 # Agent Rules
@@ -52,6 +52,9 @@ The rules:
   that first enforced it: a new control inherits nothing, the second call
   site means the guard is in the wrong place, and the invariant is pinned
   once per control that can violate it.
+- [`intent-before-mechanism.md`](./rules/intent-before-mechanism.md) (every
+  project) — names, structure, and tests state the chosen behavior; mechanics
+  serve that decision.
 - [`code-review.md`](./rules/code-review.md) (every project) — run the
   `code-review` skill and fix findings before every commit.
 - [`coding-standard-updates.md`](./rules/coding-standard-updates.md) (every
