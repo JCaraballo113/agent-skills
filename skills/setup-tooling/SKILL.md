@@ -36,16 +36,16 @@ Ask up front (AskUserQuestion works well); don't guess:
 
 In order, skipping what intent ruled out:
 
-1. The stack module for the platform — `/john-superpowers:setup-js-stack`
-   (web) and/or `/john-superpowers:setup-expo-stack` (mobile); both for a
+1. The stack module for the platform — `setup-js-stack`
+   (web) and/or `setup-expo-stack` (mobile); both for a
    web+mobile monorepo. Framework, package-manager baseline, database, CI.
    JS/TS only.
-2. `/john-superpowers:lint-guardrails` — every project, any ecosystem.
-3. `/john-superpowers:setup-evm-stack` — on-chain web projects only; it
+2. `lint-guardrails` — every project, any ecosystem.
+3. `setup-evm-stack` — on-chain web projects only; it
    adds exemptions to the guardrails config, so it lands on top of one.
-4. `/john-superpowers:design-tooling` — frontend projects only, with the
+4. `design-tooling` — frontend projects only, with the
    design tool from intent.
-5. `/john-superpowers:agent-rules` — every project.
+5. `agent-rules` — every project.
 6. If `setup-matt-pocock-skills` appears in the available-skills list
    (any scope, possibly namespaced), invoke it to layer the
    agent-workflow conventions (issue tracker, triage labels, domain

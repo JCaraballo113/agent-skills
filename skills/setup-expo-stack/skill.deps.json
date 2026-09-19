@@ -1,4 +1,4 @@
 {
-  "expo-skills": "Claude Code: /plugin install expo@claude-plugins-official — other agents: npx skills add expo/skills",
+  "expo-skills": "Install the Expo skills package for the current agent host, or run: npx skills add expo/skills",
   "pnpm": "corepack enable && corepack prepare pnpm@latest --activate (corepack ships with Node)"
 }

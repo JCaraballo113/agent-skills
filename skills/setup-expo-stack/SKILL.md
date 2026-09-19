@@ -6,9 +6,9 @@ description: The Expo/React Native mobile stack module for setup-tooling — Exp
 # Setup Expo Stack
 
 The Expo/React Native instantiation of the preferred stack — mobile's
-answer to `/john-superpowers:setup-js-stack`. Intent answers (backend,
+answer to `setup-js-stack`. Intent answers (backend,
 existing code, web+mobile monorepo) normally arrive from
-`/john-superpowers:setup-tooling`; invoked standalone, ask them first —
+the `setup-tooling` skill; invoked standalone, ask them first —
 never scaffold before the interview, never re-scaffold over existing code.
 
 The **Expo skills bundle is the knowledge layer** this module defers to —
@@ -33,9 +33,9 @@ Don't reteach what those skills own — point at them.
 | Validation | Zod (single source of truth, shared client/server) | Zod |
 | Motion | react-native-reanimated (+ gesture-handler), when the UI animates | — |
 | Backend/DB | decide per project | API routes or external API + Drizzle — see Backend |
-| Design | `/john-superpowers:design-tooling` | — |
+| Design | `design-tooling` | — |
 | Tests | jest-expo + @testing-library/react-native, colocated | jest-expo |
-| Lint | `/john-superpowers:lint-guardrails` on `eslint-config-expo/flat` | same |
+| Lint | `lint-guardrails` on `eslint-config-expo/flat` | same |
 | Build / Update / CI / Submit | EAS (`eas-workflows`, `eas-app-stores`) | same |
 
 Scaffolders (verify current flags against the tool's docs before running):
@@ -51,7 +51,7 @@ side — it pins the version matched to the project's Expo SDK.
 
 ## pnpm baseline
 
-Same pnpm baseline as `/john-superpowers:setup-js-stack` (packageManager
+Same pnpm baseline as `setup-js-stack` (packageManager
 pinned via corepack, `minimumReleaseAge: 1440`, the standard scripts). Expo
 deltas only:
 
@@ -73,7 +73,7 @@ skills — defer, don't hand-roll.
 
 jest-expo (`preset: "jest-expo"`) with @testing-library/react-native;
 `react-test-renderer` is deprecated on React 19, don't add it.
-`/john-superpowers:agent-rules` generates `testing.md` against jest-expo —
+`agent-rules` generates the testing instruction against jest-expo —
 it owns the layout (Expo colocation) and the happy/negative-path grouping.
 
 Vitest is deliberately excluded: it can't transform React Native's
@@ -89,11 +89,11 @@ Mobile has no in-app Postgres; the interview picks the shape:
 - **Shared API** — Expo API routes (deployed on EAS Hosting) or an external
   Hono/TanStack backend owning Drizzle + Supabase Postgres, matching the web
   stack. Best for a web+mobile monorepo; the DB portion then follows
-  `/john-superpowers:setup-js-stack` and its same-commit migration rule.
+  `setup-js-stack` and its same-commit migration rule.
 
 ## Commit gate + CI
 
-lefthook commit gate as in `/john-superpowers:setup-js-stack` (pre-commit
+lefthook commit gate as in `setup-js-stack` (pre-commit
 lint on staged files, pre-push typecheck + tests). CI and release run on
 **EAS** — EAS Workflows for lint/typecheck/test + build (`eas-workflows`),
 EAS Update for OTA JS updates, EAS Submit for store releases

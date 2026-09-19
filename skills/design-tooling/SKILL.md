@@ -10,7 +10,7 @@ project, with the **`impeccable`** skill governing design quality.
 
 **The tool** is this module's own detail question — **Pencil** (a `.pen`
 file through the Pencil MCP) or **Figma** (a file through the Figma MCP)
-— asked once when `/john-superpowers:setup-tooling` has not already
+— asked once when `setup-tooling` has not already
 answered it; an existing project keeps the tool its agent docs name.
 
 Check availability: `impeccable` in the available-skills list (any scope,
@@ -34,11 +34,11 @@ Then, tool-agnostic:
 - Design each screen in two passes, template then page: first the
   structure (layout, dynamic-content bounds), then real representative
   content, following the design-system agent rule
-  (`/john-superpowers:agent-rules`) for the extremes and for mocking
+  (`agent-rules`) for the extremes and for mocking
   repeated, data-driven content from real values. A screen is designed
   when its extremes are mocked, at desktop and phone width.
 - Copy drafted in the design file obeys the project's voice rule (also
-  `/john-superpowers:agent-rules`) exactly as code does; a design-only
+  `agent-rules`) exactly as code does; a design-only
   string is still client-visible.
 
 Then the tool's own mechanics: [PENCIL.md](./PENCIL.md) or

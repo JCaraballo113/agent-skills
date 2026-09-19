@@ -1,14 +1,19 @@
 ---
 name: agent-rules
-description: Encode working conventions as one rule file per concern in .claude/rules/ — testing (TDD, happy/negative path, coverage as discovery), migrations, design-system (atomic design vocabulary, content extremes, motion), voice (one copy table per surface, a guard test with a banned list), round-trips (independent reads go out together, batchable reads batch), guarded-state (the guard belongs to the state not the control that first enforced it; a new control inherits nothing, the second call site means the guard is in the wrong place), code-review, coding-standard-updates (a judgment-level CODING_STANDARDS.md canon, gated by a five-point style-vs-decision test, every entry standing on its own), subagent-model-tiering (advisory escalation, parallel safety), improve-the-territory (leave touched code better than found), agent-summaries (debrief, not changelog) — generalized to the project at hand, any ecosystem. Use when the user says "setup agent rules", "encode the agent rules", or invokes setup-tooling.
+description: Encode checked-in agent conventions by concern — testing (TDD, happy/negative path, coverage as discovery), migrations, design-system (atomic design vocabulary, content extremes, motion), voice (a copy table per surface, a banned-list guard), round-trips, guarded state, code review, coding standards, subagent model tiering, improve-the-territory, and agent summaries — generalized to the project at hand in the host's native instruction format. Use when the user says "setup agent rules", "encode the agent rules", or invokes setup-tooling.
 ---
 
 # Agent Rules
 
-Encode the working conventions as one rule file per concern in
-`.claude/rules/` — checked in, loaded as project instructions every
-session. Write them generalized to the project at hand (its actual
-domains, scripts, and stack), never with another app's specifics.
+Encode the working conventions in checked-in project instructions.
+Write them generalized to the project at hand (its actual domains,
+scripts, and stack), never with another app's specifics.
+
+Use the host's native instruction format:
+
+- In Claude Code, write one file per concern under `.claude/rules/`.
+- In Codex, create or update the root `AGENTS.md`, preserving existing
+  instructions and adding one `##` section per applicable concern.
 
 Each rule's full template lives in [`rules/`](rules/); the index below
 only routes. For every rule whose "applies" condition the project meets,
@@ -47,8 +52,8 @@ The rules:
   that first enforced it: a new control inherits nothing, the second call
   site means the guard is in the wrong place, and the invariant is pinned
   once per control that can violate it.
-- [`code-review.md`](./rules/code-review.md) (every project) — run
-  `/code-review` and fix findings before every commit.
+- [`code-review.md`](./rules/code-review.md) (every project) — run the
+  `code-review` skill and fix findings before every commit.
 - [`coding-standard-updates.md`](./rules/coding-standard-updates.md) (every
   project) — a root `CODING_STANDARDS.md` seeded from the project's own
   conventions, plus the gate it changes through: propose first, five-point
@@ -72,7 +77,8 @@ When installing these rules, if a skill in
 [skill.deps.json](./skill.deps.json) isn't installed, prompt the user to
 run its install command first.
 
-Done when every applicable rule exists in `.claude/rules/`, written from
-its template and generalized to this project, every skill-gated rule
-carries the installed-check wording inline, and `CODING_STANDARDS.md` exists at
-the root with its header and every seeded section approved by the human.
+Done when every applicable rule exists in the host's native checked-in
+instruction location, written from its template and generalized to this
+project, every skill-gated rule carries the installed-check wording inline,
+and `CODING_STANDARDS.md` exists at the root with its header and every seeded
+section approved by the human.

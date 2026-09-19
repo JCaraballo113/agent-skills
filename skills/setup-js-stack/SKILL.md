@@ -7,7 +7,7 @@ description: The JS/TS stack module for setup-tooling — TanStack Start (or Vit
 
 The JS/TS instantiation of the preferred stack. Intent answers (project
 type, database, existing code) normally arrive from
-`/john-superpowers:setup-tooling`; invoked standalone, ask them first —
+the `setup-tooling` skill; invoked standalone, ask them first —
 never scaffold before the interview, and never re-scaffold over
 existing code. One extra detail question is this module's own:
 **forms-heavy?** → TanStack Form wired to Zod.
@@ -24,9 +24,9 @@ existing code. One extra detail question is this module's own:
 | Styling | Tailwind + shadcn | Tailwind + shadcn | — |
 | Motion | GSAP (when the UI animates) | GSAP (when the UI animates) | — |
 | ORM/DB | Drizzle + Docker/Supabase Postgres | (via its API) | Drizzle + Docker/Supabase Postgres |
-| Design | `/john-superpowers:design-tooling` | `/john-superpowers:design-tooling` | — |
+| Design | `design-tooling` | `design-tooling` | — |
 | Tests | Vitest | Vitest | Vitest |
-| Lint | `/john-superpowers:lint-guardrails` | `/john-superpowers:lint-guardrails` | `/john-superpowers:lint-guardrails` |
+| Lint | `lint-guardrails` | `lint-guardrails` | `lint-guardrails` |
 | CI | GitHub Actions | GitHub Actions | GitHub Actions |
 
 Scaffolders (verify current flags against the tool's docs before running):
@@ -68,7 +68,7 @@ verifyDepsBeforeRun: false # a linked worktree's symlinked node_modules fails pn
   `pg_isready`. Scripts: `db:up` / `db:down`.
 - Drizzle: `drizzle-orm` + `drizzle-kit` + `pg`; `db:push` (local dev),
   `db:generate` (committed migrations), `db:migrate` (deploy). The
-  same-commit migration rule ships via `/john-superpowers:agent-rules`.
+  same-commit migration rule ships via `agent-rules`.
 - Vitest `globalSetup` that creates throwaway databases in the dev
   container and pushes the schema — tests never touch a real DB.
 - Secrets never in the repo: `.env.example` documents variables only.
@@ -105,7 +105,8 @@ ln -s "$main/node_modules" "$here/node_modules"
   A new dependency in a linked worktree gets a real tree — remove the
   symlink, then install (`pnpm add` through the link refuses with
   `ERR_PNPM_UNEXPECTED_VIRTUAL_STORE` and touches neither side). Agent
-  worktrees inside the repo (`.claude/worktrees/`) go in `.gitignore` and
+  worktrees inside the repo (for example, `.claude/worktrees/` or
+  `.agents/worktrees/`) go in `.gitignore` and
   the linter's ignores, or the main checkout's lint walks into every one.
 
 It's a tripwire, not a sandbox — `git commit --no-verify` bypasses it — so

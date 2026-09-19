@@ -1,10 +1,10 @@
 {
-  "name": "john-superpowers",
-  "description": "Personal collection of Claude Code skills \u2014 PR review workflows (triage, status), intent-driven project bootstrap (taste + stack modules), orchestrated implementation, UX bridging, and design cleanup.",
-  "version": "2.30.0",
+  "name": "agent-skills",
+  "description": "Personal collection of agent skills \u2014 PR review workflows (triage, status), intent-driven project bootstrap (taste + stack modules), orchestrated implementation, UX bridging, and design cleanup.",
+  "version": "3.0.0",
   "author": {
     "name": "John Caraballo",
     "email": "jcaraballo.dev@gmail.com"
   },
-  "repository": "https://github.com/JCaraballo113/claude-skills"
+  "repository": "https://github.com/JCaraballo113/agent-skills"
 }

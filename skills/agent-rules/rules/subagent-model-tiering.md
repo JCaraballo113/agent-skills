@@ -39,9 +39,9 @@ Spawner briefs for delegated work name this escape hatch, so delegated agents kn
 
 ## The spawner is the reviewer
 
-When a cheaper-model agent returns, review its diff before committing — use `/code-review` for non-trivial batches (see `.claude/rules/code-review.md`). Cheaper execution plus a review gate from the spawner beats running everything on the top tier.
+When a cheaper-model agent returns, review its diff before committing — use the `code-review` skill for non-trivial batches. Cheaper execution plus a review gate from the spawner beats running everything on the top tier.
 
-Set the model explicitly on each spawn (`model:` on the Agent tool, or `model`/`effort` per stage in a Workflow) rather than relying on inheritance.
+Set the model or reasoning tier explicitly on each spawn when the host exposes that control rather than relying on inheritance.
 
 ## Parallel execution safety
 

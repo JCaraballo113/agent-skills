@@ -43,7 +43,7 @@ In landing order: review the implementer's diff against the base yourself before
 
 ## 5. Fresh eyes
 
-Spawn a fresh agent to run `/john-superpowers:cleanup` scoped to the diff from the base. It commits its fixes. Then run `/code-review` with the base as the fixed point, fix the findings, commit. Done when a review pass returns nothing worth fixing.
+Spawn a fresh agent to run the `cleanup` skill scoped to the diff from the base. It commits its fixes. Then run the `code-review` skill with the base as the fixed point, fix the findings, commit. Done when a review pass returns nothing worth fixing.
 
 ## 6. Report
 

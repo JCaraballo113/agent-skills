@@ -1,23 +1,34 @@
-# claude-skills
+# agent-skills
 
-Personal collection of [Claude Code](https://docs.claude.com/en/docs/claude-code) skills, packaged as a Claude Code **plugin**. The repo doubles as its own single-plugin marketplace, so it installs directly from GitHub — portable across machines.
+Personal collection of agent skills for [Claude Code](https://docs.claude.com/en/docs/claude-code) and Codex. The repo doubles as its own plugin marketplace, so it installs directly from GitHub — portable across machines.
 
 ## Install
 
 Inside Claude Code:
 
 ```
-/plugin marketplace add JCaraballo113/claude-skills
-/plugin install john-superpowers@jcaraballo
+/plugin marketplace add JCaraballo113/agent-skills
+/plugin install agent-skills@jcaraballo
 ```
+
+### Codex
+
+```sh
+codex plugin marketplace add JCaraballo113/agent-skills
+codex plugin add agent-skills@jcaraballo
+```
+
+Codex supports this marketplace's Claude-format metadata and also reads the
+Codex manifest. Skills are invoked as `$<name>` or selected from their
+descriptions.
 
 ### Local development install
 
 On a machine where this repo is cloned and you want edits picked up without pushing to GitHub, add the marketplace from the local path instead:
 
 ```
-/plugin marketplace add ~/Documents/repos/claude-skills
-/plugin install john-superpowers@jcaraballo
+/plugin marketplace add ~/Documents/repos/agent-skills
+/plugin install agent-skills@jcaraballo
 ```
 
 ## Updating
@@ -31,19 +42,22 @@ After pulling (or pushing from another machine):
 
 `/reload-plugins` applies changes in the active session; restarting Claude Code also works.
 
+In Codex, rerun `codex plugin add agent-skills@jcaraballo` after updating
+the marketplace, then start a new thread to use the updated skills.
+
 ## Uninstall
 
 ```
-/plugin uninstall john-superpowers@jcaraballo
+/plugin uninstall agent-skills@jcaraballo
 ```
 
 ## Skills
 
-Skills live under [`skills/`](./skills). Once the plugin is installed they're invoked as `/john-superpowers:<name>`, and Claude also auto-invokes them from their descriptions.
+Skills live under [`skills/`](./skills) and are shared by the Claude Code and Codex plugin manifests. Claude invokes them as `/agent-skills:<name>`; Codex makes them available as `$<name>`. Both can select a skill from its description.
 
 | Skill | Description |
 |---|---|
-| [agent-rules](./skills/agent-rules/SKILL.md) | Encode working conventions as one rule file per concern in `.claude/rules/` — testing (TDD, happy/negative path, coverage as discovery), migrations, design-system (atomic vocabulary + content extremes), voice (a copy table per surface + a banned-list guard), round-trips (independent reads go out together, batchable reads batch), code-review, coding-standard-updates (a gated CODING_STANDARDS.md canon), sub-agents (model tiering), agent-summaries (debrief, not changelog) — generalized to the project, any ecosystem. |
+| [agent-rules](./skills/agent-rules/SKILL.md) | Encode working conventions by concern in the host's native checked-in instruction format — testing (TDD, happy/negative path, coverage as discovery), migrations, design-system (atomic vocabulary + content extremes), voice (a copy table per surface + a banned-list guard), round-trips, code-review, coding-standard-updates (a gated CODING_STANDARDS.md canon), sub-agents (model tiering), agent-summaries (debrief, not changelog) — generalized to the project, any ecosystem. |
 | [clean-mac-hdd](./skills/clean-mac-hdd/SKILL.md) | Diagnose what fills a Mac's disk — measure the Data volume, attribute every large folder to its producer (regenerable cache / leak / data), report a table, then on the user's go-ahead reclaim caches and leaks and patch each leaking producer. Ships a catalog of known offenders (`OFFENDERS.md`) that grows with every run. |
 | [clean-windows-hdd](./skills/clean-windows-hdd/SKILL.md) | The Windows mirror of `clean-mac-hdd` — measure the volumes, attribute every large folder to its producer (regenerable cache / leak / data), report a table, then on the user's go-ahead reclaim and patch. Its `OFFENDERS.md` covers WSL and Docker `.vhdx` files, hibernation, WinSxS, Windows.old, package caches, emulator images. |
 | [clean-wsl](./skills/clean-wsl/SKILL.md) | Reclaim space in a WSL 2 distro across both layers: inside Linux (apt, journal, Docker, caches) and the `ext4.vhdx` on the Windows drive that grows on every write and never shrinks by itself — `fstrim`, `wsl --shutdown`, then sparse mode / `Optimize-VHD` / `diskpart` compaction. |
@@ -51,7 +65,7 @@ Skills live under [`skills/`](./skills). Once the plugin is installed they're in
 | [design-tooling](./skills/design-tooling/SKILL.md) | Design-first frontend tooling: every UI designed in the project's design tool — Pencil (`.pen` via its MCP, `PENCIL.md`) or Figma (via the Figma MCP, `FIGMA.md`) — with `impeccable` governing quality; design precedes implementation. Deps declared in its `skill.deps.json`. |
 | [improve-user-experience](./skills/improve-user-experience/SKILL.md) | Find "bridging opportunities" — gulfs the user has to cross themselves — using Don Norman's gulf vocabulary (execution / evaluation, signifier, feedback). Walks the flows, presents candidates as a temp-dir HTML report, then grills the chosen one and designs the bridge in Pencil, held to `impeccable`'s bar. Anchored to `EXPERIENCE.md` (human-owned) + `CONTEXT.md`. Requires the Pencil MCP and the `impeccable` skill (declared in its `skill.deps.json`). Use when the user wants to improve UX, reduce friction, or fix where users get stuck. |
 | [lint-guardrails](./skills/lint-guardrails/SKILL.md) | AI-guardrail linting philosophy — size/complexity caps that force extraction (cyclomatic and cognitive complexity, block depth, no loop inside a loop), no comments, everything an error, config protected by a deny hook — with per-ecosystem implementations (ESLint for JS/TS in `ESLINT.md`) and a remediation workflow for existing repos. Standalone-safe. |
-| [orchestrated-implement](./skills/orchestrated-implement/SKILL.md) | Implements several ready tickets at once: verifies that several ready tickets can run in parallel (blockers, shared outputs, an ownership map of owned vs. shared files), asks which model the implementers run on (or lets the orchestrator pick per ticket), preps one worktree per ticket (named branch from the base, `node_modules` linked, typecheck green) and spawns a fresh implementer onto each (a pointer brief, never a fork), lands them in a decided order with the spawner reviewing each diff, then puts fresh eyes on the whole landing — `cleanup`, then `/code-review` against the base. Deps in its `skill.deps.json`. |
+| [orchestrated-implement](./skills/orchestrated-implement/SKILL.md) | Implements several ready tickets at once: verifies that several ready tickets can run in parallel (blockers, shared outputs, an ownership map of owned vs. shared files), asks which model the implementers run on (or lets the orchestrator pick per ticket), preps one worktree per ticket (named branch from the base, `node_modules` linked, typecheck green) and spawns a fresh implementer onto each (a pointer brief, never a fork), lands them in a decided order with the spawner reviewing each diff, then puts fresh eyes on the whole landing — `cleanup`, then `code-review` against the base. Deps in its `skill.deps.json`. |
 | [pr-review-status](./skills/pr-review-status/SKILL.md) | Read-only overview of the current branch's PR review comments — groups into addressed / pending / in-discussion / deferred. No edits, no posts. Pair with `triage-pr-comments` when you want to act on what you see. |
 | [setup-evm-stack](./skills/setup-evm-stack/SKILL.md) | The EVM layer module for on-chain web projects: wagmi + viem on TanStack Query, a wallet layer per project, vendored ABIs + address provenance under `src/lib/web3/`, the anvil fork trial (`FORK-TRIAL.md` — fork / seed ladder / dev / smoke / unstick + a runbook section) and the fixture-transport DOM test tier (`FIXTURE-TRANSPORT.md` — per-chain fixtures, every wire request recorded, an unfixtured one failing the render). Deps in its `skill.deps.json`. Usually composed by `setup-tooling`. |
 | [setup-expo-stack](./skills/setup-expo-stack/SKILL.md) | The Expo/React Native mobile stack module: Expo + Expo Router, NativeWind v5 + Tailwind v4, TanStack Query, Zod, react-native-reanimated, jest-expo, EAS for build/update/CI, all on pnpm with the 1-day package-age guard. Backend decided per project. Defers depth to the `expo:*` skills. Usually composed by `setup-tooling`. |

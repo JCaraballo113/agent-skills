@@ -5,9 +5,9 @@ description: The EVM layer module for setup-tooling — wagmi + viem on TanStack
 
 # Setup EVM Stack
 
-The on-chain layer over `/john-superpowers:setup-js-stack`: a frontend
+The on-chain layer over `setup-js-stack`: a frontend
 that reads and writes deployed EVM contracts through the user's wallet.
-Intent answers normally arrive from `/john-superpowers:setup-tooling`;
+Intent answers normally arrive from `setup-tooling`;
 invoked standalone, ask them first — never scaffold before the interview,
 and never re-scaffold over existing code. Verify every API shape below
 against the current wagmi and viem docs before writing it.
@@ -52,7 +52,7 @@ command from [skill.deps.json](./skill.deps.json).
 3. **Test tier** — the fixture transport and wallet connector seams, the
    `dom` Vitest project and its render helper, per
    [FIXTURE-TRANSPORT.md](./FIXTURE-TRANSPORT.md).
-4. **Lint exemptions** in the config `/john-superpowers:lint-guardrails`
+4. **Lint exemptions** in the config `lint-guardrails`
    writes: `src/lib/web3/abis/**` keeps its size, magic numbers and
    provenance comments; `scripts/**` keeps size, params, complexity,
    magic numbers and console. Shell scripts stay unlinted — their header
@@ -64,9 +64,9 @@ command from [skill.deps.json](./skill.deps.json).
    batch at all. Reads that cannot batch but depend on nothing are issued
    together instead, and each flow's round-trip count lives in the
    `README.md` beside it — the `round-trips` rule
-   (`/john-superpowers:agent-rules`) is the general form.
+   (`agent-rules`) is the general form.
 6. **Hard constraints**, one sentence each, into the agent docs and the
-   rule files `/john-superpowers:agent-rules` writes: no success state
+   instructions `agent-rules` writes: no success state
    before an on-chain receipt; amounts parsed at the boundary, never
    trusted for shape; missing price or USD data renders as "—", never
    `$0.00`, and never disables token-denominated actions; the app never
