@@ -1,6 +1,6 @@
 {
   "name": "jcaraballo",
-  "description": "John Caraballo's personal Claude Code plugin marketplace.",
+  "description": "John Caraballo's personal agent skills marketplace.",
   "owner": {
     "name": "John Caraballo",
     "email": "jcaraballo.dev@gmail.com"
@@ -9,7 +9,7 @@
     {
       "name": "agent-skills",
       "source": "./",
-      "description": "Personal collection of Claude Code skills — PR workflows, JS/TS bootstrap, orchestrated implementation, UX bridging, and design cleanup."
+      "description": "Agent skills for project setup, review, UX, and cleanup workflows."
     }
   ]
 }

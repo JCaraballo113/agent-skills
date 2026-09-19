@@ -1,7 +1,7 @@
 {
   "name": "agent-skills",
-  "version": "3.0.0",
-  "description": "Personal development-workflow skills for project setup, implementation, review, UX, and cleanup.",
+  "version": "3.0.1",
+  "description": "Agent skills for project setup, review, UX, and cleanup workflows.",
   "author": {
     "name": "John Caraballo",
     "email": "jcaraballo.dev@gmail.com",
@@ -12,8 +12,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Agent Skills",
-    "shortDescription": "Personal skills for development workflows.",
-    "longDescription": "A collection of skills for project setup, implementation, review, UX, and cleanup workflows.",
+    "shortDescription": "Skills for project setup, review, UX, and cleanup.",
+    "longDescription": "A personal collection of agent skills for project setup, review, UX, and cleanup workflows.",
     "developerName": "John Caraballo",
     "category": "Productivity",
     "capabilities": ["Write"],
