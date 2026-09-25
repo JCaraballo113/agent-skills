@@ -1,6 +1,6 @@
 ---
 name: setup-tooling
-description: Bootstrap a project with my preferred tooling. Drives an intent interview first, then composes the matching modules — a per-platform stack (JS/TS web via setup-js-stack, Expo/React Native mobile via setup-expo-stack), lint-guardrails, setup-evm-stack for on-chain web projects, design-tooling, and agent-rules. Use when the user says "setup tooling" or "bootstrap this project", sets up a mobile/expo app, or starts a fresh repo.
+description: Bootstrap a project with my preferred tooling. Drives an intent interview first, then composes the matching modules — a per-platform stack (JS/TS web via setup-js-stack, Expo/React Native mobile via setup-expo-stack), lint-guardrails, setup-evm-stack for on-chain web projects, design-tooling, setup-animation-tooling for projects that need illustration or animation assets, and agent-rules. Use when the user says "setup tooling" or "bootstrap this project", sets up a mobile/expo app, or starts a fresh repo.
 ---
 
 # Setup Tooling
@@ -29,7 +29,10 @@ Ask up front (AskUserQuestion works well); don't guess:
 6. **On-chain contracts?** — a web frontend that reads and writes EVM
    contracts through the user's wallet takes `setup-evm-stack` as a layer
    over the web stack.
-7. **Existing code?** — never re-scaffold over existing work; layer the
+7. **Illustration or animation assets?** — hero art, sprites, loops, an
+   animated logo or a short film drawn for the project (not in-app UI
+   motion, which the stack module covers) takes `setup-animation-tooling`.
+8. **Existing code?** — never re-scaffold over existing work; layer the
    missing pieces instead.
 
 ## 2. Compose modules
@@ -45,8 +48,10 @@ In order, skipping what intent ruled out:
    adds exemptions to the guardrails config, so it lands on top of one.
 4. `design-tooling` — frontend projects only, with the
    design tool from intent.
-5. `agent-rules` — every project.
-6. If `setup-matt-pocock-skills` appears in the available-skills list
+5. `setup-animation-tooling` — projects that need illustration or
+   animation assets only.
+6. `agent-rules` — every project.
+7. If `setup-matt-pocock-skills` appears in the available-skills list
    (any scope, possibly namespaced), invoke it to layer the
    agent-workflow conventions (issue tracker, triage labels, domain
    docs) on top of the fresh tooling. If not, skip silently — don't

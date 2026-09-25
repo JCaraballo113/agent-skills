@@ -1,0 +1,13 @@
+{
+  "anidoodle": "npx skills add https://github.com/alexgreensh/anidoodle --skill anidoodle -g -a claude-code -y",
+  "node": {
+    "darwin": "brew install node",
+    "linux": "sudo apt install nodejs npm (needs >= 20; on an older distro use nvm: nvm install --lts)",
+    "win32": "winget install OpenJS.NodeJS.LTS"
+  },
+  "ffmpeg": {
+    "darwin": "brew install ffmpeg",
+    "linux": "sudo apt install ffmpeg",
+    "win32": "winget install Gyan.FFmpeg"
+  }
+}

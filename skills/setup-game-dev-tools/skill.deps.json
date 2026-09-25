@@ -1,0 +1,19 @@
+{
+  "git": {
+    "darwin": "xcode-select --install",
+    "win32": "winget install --id Git.Git -e"
+  },
+  "uv": {
+    "darwin": "brew install uv",
+    "win32": "winget install --id astral-sh.uv -e"
+  },
+  "blender": {
+    "darwin": "brew install --cask blender",
+    "win32": "winget install --id BlenderFoundation.Blender -e"
+  },
+  "unity-cli": {
+    "darwin": "brew install --cask unity-cli",
+    "win32": "winget install --id Unity.CLI -e"
+  },
+  "unity-agent-plugin": "claude plugin marketplace add Unity-Technologies/unity-agent-plugin && claude plugin install unity@unity-agent-plugin"
+}
