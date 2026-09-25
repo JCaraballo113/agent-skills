@@ -1,0 +1,16 @@
+{
+  "blender-mcp": "Run the setup-game-dev-tools skill (Blender 5.1+, Blender Lab MCP add-on + server)",
+  "ffmpeg": {
+    "darwin": "brew install ffmpeg",
+    "linux": "sudo apt install ffmpeg",
+    "win32": "winget install --id Gyan.FFmpeg -e"
+  },
+  "rhubarb": "bash skills/blender-character/tools/rhubarb-build.sh <project>/tools/rhubarb   (needs: brew install cmake boost)",
+  "cmake": {
+    "darwin": "brew install cmake",
+    "win32": "winget install --id Kitware.CMake -e"
+  },
+  "boost": {
+    "darwin": "brew install boost"
+  }
+}

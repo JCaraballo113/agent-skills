@@ -1,6 +1,6 @@
 ---
 name: setup-game-dev-tools
-description: Game-dev tooling for Claude Code on macOS and native Windows — Blender with the official Blender Lab MCP (add-on + stdio server), and Unity with its CLI, an Editor (6.0+), Unity's official Claude Code plugin and the per-project Pipeline bridge — each step detected before it is installed, then verified end to end. Use when the user says "setup game dev tools", "set up Blender MCP", "set up Unity for Claude", or starts a game project. For code-drawn illustration and animation assets, compose setup-animation-tooling.
+description: Game-dev tooling for Claude Code on macOS and native Windows — Blender with the official Blender Lab MCP (add-on + stdio server), and Unity with its CLI, an Editor (6.0+), Unity's official Claude Code plugin and the per-project Pipeline bridge — each step detected before it is installed, then verified end to end. Use when the user says "setup game dev tools", "set up Blender MCP", "set up Unity for Claude", or starts a game project. For code-drawn illustration and animation assets, compose setup-animation-tooling; for building and animating characters once Blender is set up, use blender-character.
 ---
 
 # Game-Dev Tools
