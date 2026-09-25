@@ -28,8 +28,16 @@ copies installed through different channels conflict:
 | win32 | `Get-Command unity`, `$env:LOCALAPPDATA\Unity\bin\unity.exe` (Hub's copy) | `winget install --id Unity.CLI -e` |
 
 Hub's copy is only on PATH in shells started after Hub first ran (it adds
-`. ~/.unity/env` to `~/.zshrc`). Within this session, call it by absolute
-path. Keep a found copy up to date with `unity self-update`, not a second
+`. ~/.unity/env` to `~/.zshrc`). Claude Code inherits PATH from the
+terminal it was launched from, so a restart from an older tab still
+cannot find `unity`, and Unity's skills call it by that bare name. On darwin,
+fix it for good with one symlink into the directory that holds Claude
+Code's own binary, which is always on its PATH:
+`ln -s ~/.unity/bin/unity ~/.local/bin/unity` (skip it if
+`~/.local/bin/unity` exists or the brew copy is used). On win32, Hub adds
+the directory to the user `Path`, so launch Claude Code from a new
+terminal. Within the current session, call the CLI by absolute path.
+Keep a found copy up to date with `unity self-update`, not a second
 install. For every call below, set
 `UNITY_NO_BANNER=1 UNITY_NO_CONSENT_PROMPT=1` and pass `--format json`
 where you parse the output.
