@@ -1,0 +1,12 @@
+{
+  "node": {
+    "darwin": "brew install node",
+    "linux": "sudo apt install nodejs npm (needs >= 20; on an older distro use nvm: nvm install --lts)",
+    "win32": "winget install OpenJS.NodeJS.LTS"
+  },
+  "git": {
+    "darwin": "xcode-select --install",
+    "linux": "sudo apt install git",
+    "win32": "winget install Git.Git"
+  }
+}
