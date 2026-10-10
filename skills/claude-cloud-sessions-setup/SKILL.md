@@ -61,7 +61,9 @@ Ask whether the user wants issues shipped by labelling them. If not, skip to ste
 3. The user creates the routine at https://claude.ai/code/routines: the filled prompt, the model, the repo, the environment from step 3, the trigger **Issue: Labeled** filtered to `claude` (a schedule only if they want a fallback; its minimum is hourly), and **every connector removed**.
 4. Test it on one issue whose work is code a test can prove: comment which items to take, then add the label. Watch the issue until it shows `claude-working` and a comment linking the session.
 
-Done when a run has claimed the test issue, or the user declined the routine.
+5. Offer the conflicts routine: when several PRs from the issue routine are open at once, each merge can leave the others conflicting. Fill [CONFLICTS-PROMPT.md](CONFLICTS-PROMPT.md) and give it to the user for a second routine with the trigger **PR merged** filtered to base branch `<default branch>`, the same environment, and every connector removed.
+
+Done when a run has claimed the test issue, or the user declined the routine; and the conflicts routine is saved, or declined.
 
 ## 6. Hand over
 
