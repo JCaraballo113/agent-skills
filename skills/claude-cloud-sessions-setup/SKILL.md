@@ -63,7 +63,9 @@ Ask whether the user wants issues shipped by labelling them. If not, skip to ste
 
 5. Offer the conflicts routine: when several PRs from the issue routine are open at once, each merge can leave the others conflicting. Fill [CONFLICTS-PROMPT.md](CONFLICTS-PROMPT.md) and give it to the user for a second routine with the trigger **PR merged** filtered to base branch `<default branch>`, the same environment, and every connector removed.
 
-Done when a run has claimed the test issue, or the user declined the routine; and the conflicts routine is saved, or declined.
+6. Offer the triage routine, so issues queue themselves: fill [TRIAGE-PROMPT.md](TRIAGE-PROMPT.md), create its two labels after the user agrees, and give it to the user for a third routine with the triggers **Issue: Opened** (no filter) and a daily schedule, the same environment, and every connector removed. Keep step 9 of the issue routine's prompt only when the triage routine is saved. Run it once with **Run now** to triage the backlog.
+
+Done when a run has claimed the test issue, or the user declined the routine; and the conflicts and triage routines are saved, or declined.
 
 ## 6. Hand over
 
