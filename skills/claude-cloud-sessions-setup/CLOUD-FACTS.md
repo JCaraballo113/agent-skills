@@ -107,6 +107,7 @@ Not carried over:
   - An API endpoint with a bearer token. Its `text` arrives wrapped as untrusted data.
   - GitHub events. The docs list only pull request and release events; the routine form also offers issue events (Issue: Opened, Issue: Labeled) with filters such as Labels is one of.
   - GitHub events past an hourly cap are dropped.
+- **A draft PR starts no routine** (seen in October 2026): Pull request: Opened fired for a ready PR and never for a draft, with or without an Is draft filter, and a Head branch filter on `claude/` didn't match either. A routine that should see a run's PRs needs them opened ready, with its own check of the branch in the prompt.
 - A GitHub-triggered run gets a short block added to its prompt, wrapped in `<github-trigger-context>`, that names the event and nothing more (seen in October 2026; the docs don't say):
 
   ```
