@@ -29,6 +29,13 @@ apt-get install -y --no-install-recommends libnss3 libdbus-1-3 libatk1.0-0t64 li
 
 `ldd <browser binary> | grep "not found"` lists any still missing.
 
+## Proof a person can see
+
+A run can show its work in the PR, not just say it passed:
+
+- **Screenshots**: `scripts/shot.mjs` (in this skill; copy it to the repo's `scripts/`) drives Chrome Headless Shell over the DevTools protocol with Node alone: open a page, click or run script, wait for text, save a PNG. It needs the headless-browser libraries above. A repo that already downloads a browser can point it there with `--browser`.
+- **Images in a PR**: GitHub's REST API takes no attachments, so `scripts/proof.sh` (also here) pushes them to a `proof` branch that's never merged, one folder per issue, and prints Markdown linking `https://github.com/<owner>/<repo>/blob/proof/<folder>/<file>?raw=true`. In a private repo only people with access see them, as with the PR itself. Git only, so it works where `gh` can't.
+
 ## Reproducing the VM
 
 To find a cloud-only failure without a cloud round trip, run the repo in a container that matches the VM:
