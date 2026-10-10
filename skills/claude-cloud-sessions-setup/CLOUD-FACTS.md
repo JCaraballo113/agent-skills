@@ -109,6 +109,6 @@ Not carried over:
   URL: https://github.com/<owner/repo>/issues/105
   ```
 
-  It leaves out the issue's body, its comments and which label was added: the run fetches those with `gh`. A label filter decides which events start a run, but the run itself can't tell which label fired, so it checks the issue's labels.
+  It leaves out the issue's body, its comments and which label was added: the run fetches those with `gh`. A label filter decides which events start a run, by the issue's labels when the event fires (adding any label to an issue that still has the filtered one starts a run); the run itself can't tell which label fired, so it checks the issue's labels.
 - All the user's connectors are included by default, and a run uses them without asking. Remove every one the routine doesn't need.
 - Runs act as the user on GitHub and push `claude/` branches. Use branch protection to fence the rest.

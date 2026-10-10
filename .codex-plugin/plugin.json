@@ -1,6 +1,6 @@
 {
   "name": "agent-skills",
-  "version": "3.5.0",
+  "version": "3.5.1",
   "description": "Agent skills for project setup, review, UX, and cleanup workflows.",
   "author": {
     "name": "John Caraballo",
