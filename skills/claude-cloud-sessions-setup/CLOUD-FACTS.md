@@ -55,7 +55,7 @@ Run it with `--platform linux/amd64 --cpus 4 --memory 16g`, and feed it the work
 
 - **Trusted** (the default) allows the package registries, GitHub, nodejs.org, the Ubuntu archives, `*.googleapis.com` and other common hosts. The full list is on the cloud-environments page.
 - **Custom** is your own list, plus the defaults when ticked. **Full** is any host. **None** blocks all outbound traffic.
-- GitHub goes through its own proxy whatever the level.
+- GitHub goes through its own proxy whatever the level. That proxy passes GitHub's REST API but blocked its GraphQL API (seen in October 2026), so `gh issue …` and `gh pr …` fail in a session; `gh api` on REST paths works (`gh api repos/<owner>/<repo>/issues/<n>`, `-X POST …/pulls` for a PR).
 
 ## What carries over from the repo
 
@@ -100,7 +100,7 @@ Not carried over:
   - An API endpoint with a bearer token. Its `text` arrives wrapped as untrusted data.
   - GitHub events. The docs list only pull request and release events; the routine form also offers issue events (Issue: Opened, Issue: Labeled) with filters such as Labels is one of.
   - GitHub events past an hourly cap are dropped.
-- A GitHub-triggered run gets a short block added to its prompt that names the event, and nothing more (seen in October 2026; the docs don't say):
+- A GitHub-triggered run gets a short block added to its prompt, wrapped in `<github-trigger-context>`, that names the event and nothing more (seen in October 2026; the docs don't say):
 
   ```
   Event: issues.labeled
