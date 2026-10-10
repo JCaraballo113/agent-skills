@@ -4,7 +4,7 @@ A fourth routine that closes the loop: when the issue routine opens a PR, or the
 
 Trigger: **Pull request: Opened**, with no filter. A draft PR doesn't start a routine at all (seen in October 2026), so the issue routine opens its PRs ready; the form's head-branch and draft filters didn't match either, so the prompt's step 1 is what keeps it to `claude/` branches. There's no synchronized trigger in the form, so step 4 resolves a conflict itself rather than waiting for the PR to change. Same environment, every connector removed.
 
-Fill each `<…>` from step 1 of the skill. Agree the human-in-the-loop list with the user: it's the repo's own judgement of what a person must see, and its size limits.
+Fill each `<…>` from step 1 of the skill. Agree the human-in-the-loop list with the user: it's the repo's own judgement of what a person must see, and its size limits. Keep each rule as narrow as its reason: a broad one ("anything in the UI", "any open question") holds nearly every PR, and the person ends up merging them all by hand.
 
 ```
 You decide whether a pull request in <owner/repo> from the issue routine is safe to merge without a person, and merge it when it is. Read <CLAUDE.md / AGENTS.md> first: a change that breaks its rules isn't safe.
@@ -15,15 +15,15 @@ GitHub GraphQL is blocked in these sessions, so `gh pr …` fails. Use the REST 
 2. **Read.** The PR (`gh api R/pulls/<n>`), its files (`gh api 'R/pulls/<n>/files?per_page=100'`), its description and the issue it refers to (`Refs #<i>`: `gh api R/issues/<i>` and its comments), so you know what it was for.
 3. **Hold for a person** when any of these is true, and skip to step 6:
 <the repo's human-in-the-loop list, one line each, e.g.
-   - it changes what the app shows (UI components, styles, copy): a person looks first;
-   - it adds, removes or upgrades a dependency (package.json, the lockfile);
+   - it adds a new visible element, control, screen or state (design comes first); a change to what's already there merges when the PR's Proof shows each changed screen;
+   - it adds or upgrades a dependency the app ships; a new dev-only dependency that's widely used and permissively licensed doesn't count;
    - it changes agent instructions or tooling (CLAUDE.md, .claude/ settings, hooks or agents, .github/, scripts/);
-   - it changes a saved file format or adds a migration;
+   - it changes a saved file format without a test that upgrades an older file, or one that drops data on upgrade;
    - it touches credentials, tokens, the network or anything sent off the machine;
-   - it deletes, skips or weakens a test;
-   - it's bigger than <N> changed lines or <M> files;>
-   - the PR or its issue's comments ask for a person, or say something stays undecided.
-4. **Prove.** Fetch, and on a branch from `origin/<default branch>` merge the PR's branch with `git merge --no-ff`. When it conflicts, resolve it on the PR's own branch first: check out the PR's branch, `git merge origin/<default branch>`, resolve each conflict so both sides' intent survives (read this PR's description and issue, and the merged PRs', to know what each change was for; where both add to the same list or registry, keep both entries), run the commands below on it, and push it with `git push` (never `--force`), commenting on the PR which files conflicted and how you resolved them; a conflict with no resolution that keeps both intents is step 6. Then start this step again. Run <install>, <typecheck/build> and <each test suite> on the merged result; any red is step 6. Then review the PR's changes against `origin/<default branch>` with <the review skill, e.g. "/mattpocock-skills:code-review, with the issue as the spec">: a finding that's a real problem is step 6. You judge the PR's own changes here; the only commits you add to it are conflict resolutions.
+   - it deletes, skips or weakens a test (moving a test with the same checks is fine);
+   - it's bigger than <N> changed lines or <M> files, not counting test files;>
+   - it leaves open a decision whose answer would change what this PR does, or the PR or its issue's comments ask for a person. A decision that wouldn't, such as a follow-up or an idea for later, goes into a new issue (labelled `needs-hitl` when only the creator can answer it), and the PR goes on.
+4. **Prove.** Fetch, and on a branch from `origin/<default branch>` merge the PR's branch with `git merge --no-ff`. When it conflicts, resolve it on the PR's own branch first: check out the PR's branch, `git merge origin/<default branch>`, resolve each conflict so both sides' intent survives (read this PR's description and issue, and the merged PRs', to know what each change was for; where both add to the same list or registry, keep both entries), run the commands below on it, and push it with `git push` (never `--force`), commenting on the PR which files conflicted and how you resolved them; a conflict with no resolution that keeps both intents is step 6. Then start this step again. Run <install>, <typecheck/build> and <each test suite> on the merged result; any red is step 6. Then review the PR's changes against `origin/<default branch>` with <the review skill, e.g. "/mattpocock-skills:code-review, with the issue as the spec">. Fix each finding that is a real problem and has one clear fix, inside the PR's scope, on the PR's own branch, with a test that fails without the fix; push it (never `--force`), comment what you fixed, and start this step again. A finding whose fix needs a decision is step 6. The only commits you add to the PR are conflict resolutions and these fixes.
 5. **Merge.** Write the merge commit message as `Merge #<n>: <the PR's title>` and push it: `git push origin HEAD:<default branch>` (never with `--force`). When the push is rejected because `<default branch>` moved, fetch and start again from step 4. Then comment on the PR why it was safe (what you checked, the test counts), and on its issue that it merged. GitHub marks the PR merged.
 6. **Hold.** Label the PR `needs-hitl` (`gh api -X POST R/issues/<n>/labels -f 'labels[]=needs-hitl'`) and comment: which rule or finding held it, the exact files or lines, and what the person should look at or decide. Change nothing else.
 
