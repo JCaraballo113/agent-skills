@@ -4,7 +4,8 @@ As of October 2026, from https://code.claude.com/docs/en/claude-code-on-the-web,
 
 ## The VM
 
-- Ubuntu 24.04; the setup script runs as root, so `apt-get install` works.
+- Ubuntu 24.04 on x86-64; the setup script runs as root, so `apt-get install` works. A tool that downloads a per-platform binary needs its linux-x64 build (Chrome for Testing has no Linux ARM build).
+- Ubuntu's own packages are older than Homebrew's: ffmpeg is 6.1, for example, where a Mac has a newer one, and some flags behave differently.
 - About 4 vCPUs, 16 GB RAM, 30 GB disk.
 - Preinstalled:
   - Python 3 with pip, poetry, uv, black, mypy, pytest, ruff;
@@ -17,6 +18,28 @@ As of October 2026, from https://code.claude.com/docs/en/claude-code-on-the-web,
   - A newer Node: `npm install -g n && n <major> && hash -r`.
   - Node 25+ has no corepack, so install the pinned package manager with npm (`npm install -g pnpm@<version>`).
 - Bash waits 2 minutes for a foreground command, 10 at most. Raise the limits with `BASH_DEFAULT_TIMEOUT_MS` / `BASH_MAX_TIMEOUT_MS` in the environment variables.
+
+## A headless browser
+
+Chrome Headless Shell, Puppeteer, Playwright and Remotion need these on Ubuntu 24.04, none of them preinstalled:
+
+```bash
+apt-get install -y --no-install-recommends libnss3 libdbus-1-3 libatk1.0-0t64 libgbm1 libasound2t64 libxrandr2 libxkbcommon0 libxfixes3 libxcomposite1 libxdamage1 libatk-bridge2.0-0t64 libpango-1.0-0 libcairo2 libcups2t64 fonts-liberation
+```
+
+`ldd <browser binary> | grep "not found"` lists any still missing.
+
+## Reproducing the VM
+
+To find a cloud-only failure without a cloud round trip, run the repo in a container that matches the VM:
+
+```dockerfile
+FROM --platform=linux/amd64 ubuntu:24.04
+RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates xz-utils git libatomic1 <the repo's apt packages>
+# then the runtime at the version the setup script installs
+```
+
+Run it with `--platform linux/amd64 --cpus 4 --memory 16g`, and feed it the working tree with `git archive $(git stash create || echo HEAD) | docker run -i … tar -x`. A plain tar from macOS carries `._*` files that test runners pick up. On Apple silicon the amd64 image runs under emulation: slower, but faithful. An arm64 image is faster for anything that doesn't fetch platform binaries.
 
 ## Setup script
 

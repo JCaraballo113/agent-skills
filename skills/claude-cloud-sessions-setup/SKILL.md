@@ -21,7 +21,8 @@ Find, by looking rather than asking:
 - the system tools the build and tests need: read the CI workflows' install steps and the README's setup section;
 - the commands that prove a change: install, typecheck or build, the test suites;
 - the repo's agent instructions (`CLAUDE.md`, `AGENTS.md`), and anything in them that only works on the user's machine: a local MCP server, a desktop app, a browser, macOS-only tools;
-- the plugins the user relies on: `~/.claude/plugins/known_marketplaces.json` and `~/.claude/settings.json`'s `enabledPlugins`.
+- the plugins the user relies on: `~/.claude/plugins/known_marketplaces.json` and `~/.claude/settings.json`'s `enabledPlugins`;
+- anything that fetches a per-platform binary at run time, or drives a headless browser (Chrome, Puppeteer, Playwright, Remotion): the VM is Linux x86-64, and a browser there needs system libraries.
 
 Done when you can list the stack, the proving commands, and every **local-only** dependency.
 
@@ -39,6 +40,7 @@ Draft the cloud environment for the user to create at https://claude.ai/code (en
 - **Network access**: Trusted, unless step 1 found a download host outside the default allowlist; then Custom with the defaults plus those hosts.
 - **Setup script**: installs only what the VM lacks against step 1's stack, using CLOUD-FACTS.md's preinstalled list: a runtime version it doesn't ship, apt packages, the package manager at the pinned version, and the user's plugins (`claude plugin marketplace add <owner/repo>` then `claude plugin install <plugin>@<marketplace>`, each `|| true`). End it by printing each tool's version. Hold it to the script requirements in CLOUD-FACTS.md.
 - **Environment variables**: only what the build needs. API keys for model providers stay out of it.
+- **A `SessionStart` hook in the repo**, offered alongside: the setup script lives on claude.ai and is cached, so it provisions the machine; a committed hook, guarded by `CLAUDE_CODE_REMOTE=true`, readies the project (dependencies installed, the runtime first on `PATH` via `CLAUDE_ENV_FILE`) and fills in any system package the script missed, installing only what `dpkg -s` reports missing. The hook travels with the repo; the script keeps sessions fast.
 
 Give the user the script in one copyable block, with one line per install saying why. Done when the user has saved the environment.
 
@@ -48,13 +50,13 @@ Give the user this prompt for a first session in the new environment, filled in 
 
 > Check this environment can work on <repo>. Print the version of <each tool>, and list the skills available to you. Then run <install>, <typecheck/build> and <each test suite>, and report the counts. For each failure, say whether it fails because this VM is Linux or lacks something the user's machine has (a tool, font, path, service) or because of a real bug. Change no code.
 
-The user pastes back the report. Fix the setup script for missing or wrong-version tools and missing skills, and have them rerun until it's clean. For tests that fail only on the cloud VM, offer to make them portable or skip them there, in the repo. Done when the smoke session reports every proving command green, or every red one is understood and the user has chosen what to do with it.
+The user pastes back the report. Fix the setup script for missing or wrong-version tools and missing skills, and have them rerun until it's clean. For tests that fail only on the cloud VM, offer to make them portable or skip them there, in the repo. Reproduce them first in a local container that matches the VM (CLOUD-FACTS.md, Reproducing the VM), and run the whole suite there a few times: a rare red that passes alone is a race, and its real error is what to fix. Done when the smoke session reports every proving command green, or every red one is understood and the user has chosen what to do with it.
 
 ## 5. Offer the issue routine
 
 Ask whether the user wants issues shipped by labelling them. If not, skip to step 6.
 
-1. Create the labels, after the user agrees: `claude` (hand it over), `claude-working` (a run claimed it), `claude-stuck` (a run stopped; see its comment).
+1. Turn on deleting a PR's branch when it merges, after the user agrees (`gh repo edit --delete-branch-on-merge`), so `claude/` branches don't pile up. Create the labels, after the user agrees: `claude` (hand it over), `claude-working` (a run claimed it), `claude-stuck` (a run stopped; see its comment).
 2. Fill [ROUTINE-PROMPT.md](ROUTINE-PROMPT.md) from step 1 and give it to the user as one copyable block. Ask which review skills, if any, every PR should pass through, and put them in its Review step.
 3. The user creates the routine at https://claude.ai/code/routines: the filled prompt, the model, the repo, the environment from step 3, the trigger **Issue: Labeled** filtered to `claude` (a schedule only if they want a fallback; its minimum is hourly), and **every connector removed**.
 4. Test it on one issue whose work is code a test can prove: comment which items to take, then add the label. Watch the issue until it shows `claude-working` and a comment linking the session.
