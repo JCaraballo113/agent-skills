@@ -1,0 +1,11 @@
+{"date": "2026-10-12", "lead": "2 cards wait for you below. Main is green, and 16 PRs are in line for the gate.",
+ "lines": [
+  {"section": "you", "bot": "stamp", "mood": "ask", "text": "Holds [#152](https://github.com/owner/repo/pull/152) for your call: card below."},
+  {"section": "you", "bot": "doodle", "mood": "ask", "text": "Drew the board for [#107](https://github.com/owner/repo/issues/107): sign-off card below."},
+  {"section": "overnight", "bot": "stamp", "mood": "done", "text": "Merged [#130](https://github.com/owner/repo/pull/130), [#137](https://github.com/owner/repo/pull/137) and [#136](https://github.com/owner/repo/pull/136)."},
+  {"section": "overnight", "bot": "pulse", "mood": "done", "text": "Main is green at f8483a6."},
+  {"section": "overnight", "bot": "stamp", "mood": "stumped", "text": "Holds [#160](https://github.com/owner/repo/pull/160) until Edit › Undo is checked on a Mac."},
+  {"section": "now", "bot": "stamp", "mood": "work", "text": "16 PRs wait for the gate. Next: [#143](https://github.com/owner/repo/pull/143), [#147](https://github.com/owner/repo/pull/147), [#161](https://github.com/owner/repo/pull/161)."},
+  {"section": "now", "bot": "doodle", "mood": "work", "text": "5 issues wait for a board. Tonight: [#84](https://github.com/owner/repo/issues/84), [#90](https://github.com/owner/repo/issues/90), [#102](https://github.com/owner/repo/issues/102)."},
+  {"section": "now", "bot": "bolt", "mood": "nap", "text": "Nothing shipping and nothing queued."}
+ ]}

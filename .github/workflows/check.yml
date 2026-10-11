@@ -23,6 +23,8 @@ jobs:
           claude plugin validate agents --strict
       - name: No Cursor-only terms in jstack
         run: scripts/check-jstack.sh
+      - name: create-agent-team bot tests
+        run: node --test skills/create-agent-team/bots/*.test.mjs
       - name: jstack script tests
         working-directory: skills/jstack-mode/scripts
         run: |
