@@ -13,7 +13,7 @@ Every candidate gets the same prompt, so the prompt is the contract.
 
 1. State the artifact each candidate is producing.
 2. Derive the rubric, 3-6 concrete gradeable criteria for what success looks like on *this* task. It is the picker's tool in Phase D. Candidates only see the task.
-3. Pick the runners. Use the `arena runners` line in `~/.claude/rules/jstack-models.md`. If the rule or that line is missing, default to one each on `fable` and `opus`. An `inherit` entry in this line or the cross-judge line means the parent model, so omit `model` for it. If the Agent tool rejects a configured entry, run that seat on `opus` and say so. Spawn more runners when the arena covers multiple design directions. Use the same model N times when the work is generation-bound rather than judgment-sensitive.
+3. Pick the runners. Use the `arena runners` line in `~/.claude/rules/jstack-models.md`. If the rule or that line is missing, default to two runners on `opus`. An `inherit` entry in this line or the cross-judge line means the parent model, so omit `model` for it. If the Agent tool rejects a configured entry, run that seat on `opus` and say so. Spawn more runners when the arena covers multiple design directions. Use the same model N times when the work is generation-bound rather than judgment-sensitive.
 4. Give each candidate its own output location (a git worktree where possible, otherwise `/tmp/arena-<slug>/candidate-<n>/`), per the **separate-before-serializing-shared-state** principle (`${CLAUDE_PLUGIN_ROOT}/skills/jstack-mode/principles/separate-before-serializing-shared-state.md`).
 
 ## Phase B: Fan out
@@ -24,7 +24,7 @@ If a candidate produces no output, proceed with N-1 and note the dropout.
 
 ## Phase C: Cross-judge
 
-After all Phase B candidates complete, choose one model from the `arena cross-judge pool` line in `~/.claude/rules/jstack-models.md`. If the rule or that line is missing, choose from `fable` and `opus`. Prefer a tier that wrote no candidate. If every tier in the pool wrote one, prefer a tier other than the parent's. Fable and Opus are both Claude models, so this judge differs by tier, not by model family, until a non-Claude reviewer is added to the pool. Spawn one judge on that model with `subagent_type: "agent-skills:jstack-reader"`. It sees the rubric and the candidates by path label, scores each criterion, and recommends a base with rationale. It runs in parallel with your reading in Phase D. Don't spawn it while candidates are still writing.
+After all Phase B candidates complete, choose one model from the `arena cross-judge pool` line in `~/.claude/rules/jstack-models.md`. If the rule or that line is missing, use `fable`, the second opinion. Prefer a tier that wrote no candidate. If every tier in the pool wrote one, prefer a tier other than the parent's. Fable and Opus are both Claude models, so this judge differs by tier, not by model family, until a non-Claude reviewer is added to the pool. Spawn one judge on that model with `subagent_type: "agent-skills:jstack-reader"`. It sees the rubric and the candidates by path label, scores each criterion, and recommends a base with rationale. It runs in parallel with your reading in Phase D. Don't spawn it while candidates are still writing.
 
 ## Phase D: Pick a base
 

@@ -59,18 +59,18 @@ pstack hid 51 of its 52 skills from the model. In Claude Code, `disable-model-in
 | bug-fix | opus |
 | perf-issue | opus |
 | hillclimb | opus |
-| judgment and prose | fable |
-| hardest tasks | fable |
+| judgment and prose | opus |
+| hardest tasks | opus |
 | how explorer | sonnet |
-| how explainer | fable |
+| how explainer | opus |
 | why investigators | sonnet |
-| why synthesizer | fable |
-| reflect tooling | opus |
-| reflect judgment, divergent, synthesizer | fable |
-| arena runners | fable, opus |
-| arena cross-judge pool | fable, opus |
-| swarm workers | sonnet |
-| architect runners | fable, opus |
-| interrogate reviewers | fable, opus |
+| why synthesizer | opus |
+| reflect tooling | fable |
+| reflect judgment, divergent, synthesizer | opus |
+| arena runners | opus, opus |
+| arena cross-judge pool | fable |
+| swarm workers | opus |
+| architect runners | opus, opus |
+| interrogate reviewers | opus, fable |
 
-pstack paired a Claude model with Grok so that reviewers came from different model families. jstack pairs Fable with Opus. Where a skill asks for a judge from a different family than the candidates, it takes the tier that wrote no candidate until a non-Claude reviewer such as Codex is added.
+pstack paired a Claude model with Grok so that reviewers came from different model families. jstack runs Opus everywhere and adds Fable as the second-opinion reviewer. Where a skill asks for a judge from a different family than the candidates, it takes the tier that wrote no candidate until a non-Claude reviewer such as Codex is added.

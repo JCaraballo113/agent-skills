@@ -91,7 +91,7 @@ claude --agent agent-skills:jstack-agent  # keep the mode on for a whole session
 | Skill | Description |
 |---|---|
 | [jstack-mode](./skills/jstack-mode/SKILL.md) | The entry point. 23 playbooks (investigation, bug fix, feature, refactoring, perf, hillclimb, forensics, prototype, visual parity, eval, babysit, shipping, autonomous run, orchestrate, autopilot, session pickup, pause, multi-phase plans, worktree cleanup, opening a PR), 24 principles read on demand, and the `watch-pr` and `orch` scripts. |
-| [setup-jstack](./skills/setup-jstack/SKILL.md) | Writes `~/.claude/rules/jstack-models.md`: which model each role runs on. Defaults are Fable for judgment, Opus for code, Fable and Opus as review panels, Sonnet for swarm workers. |
+| [setup-jstack](./skills/setup-jstack/SKILL.md) | Writes `~/.claude/rules/jstack-models.md`: which model each role runs on. Defaults are Opus for every role, Fable as the second-opinion reviewer, and Sonnet for bulk searching. |
 | [jstack-help](./skills/jstack-help/SKILL.md) | Which jstack skill fits a question, and how to prompt the mode. |
 | [how](./skills/how/SKILL.md), [why](./skills/why/SKILL.md), [teach](./skills/teach/SKILL.md), [recall](./skills/recall/SKILL.md) | Understand code, its history and past sessions before changing anything. |
 | [architect](./skills/architect/SKILL.md), [arena](./skills/arena/SKILL.md), [swarm](./skills/swarm/SKILL.md), [interrogate](./skills/interrogate/SKILL.md) | Parallel design runs, bakeoffs, fan-out coverage and adversarial multi-model review. |

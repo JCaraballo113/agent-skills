@@ -27,12 +27,12 @@ Launch all reviewers in a single message with the Agent tool, one per entry on t
 
 | Subagent | Default model |
 |----------|---------------|
-| Reviewer A | `fable` |
-| Reviewer B | `opus` |
+| Reviewer A | `opus` |
+| Reviewer B | `fable` |
 
 Each reviewer gets `subagent_type: "agent-skills:jstack-reader"` and `model` set to its configured entry, or its table default when there is no configured line. Omit `model` for an `inherit` entry, so that reviewer runs on the parent model.
 
-Fable and Opus are both Claude models. The defaults differ by tier, not by model family, until a non-Claude reviewer is added to the line. Weigh their agreement with that in mind.
+Fable and Opus are both Claude models. Reviewer B is the Fable second opinion. The defaults differ by tier, not by model family, until a non-Claude reviewer is added to the line. Weigh their agreement with that in mind.
 
 If the Agent tool rejects a configured entry, run that reviewer on its table default and say so. With no table default for its label, use Reviewer B's default. Do not block the review on a rejected entry. Never treat an `inherit` entry as rejected or apply the fallback to it.
 

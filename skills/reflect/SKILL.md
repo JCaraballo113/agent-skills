@@ -27,17 +27,17 @@ Each reviewer and the synthesizer name a role line in `~/.claude/rules/jstack-mo
 
 | Lens | Role line | Default `model` | Prompt template |
 |---|---|---|---|
-| Judgment | `reflect judgment, divergent, synthesizer` | `fable` | `references/judgment-reviewer.md` |
-| Tooling | `reflect tooling` | `opus` | `references/tooling-reviewer.md` |
-| Divergent | `reflect judgment, divergent, synthesizer` | `fable` | `references/divergent-reviewer.md` |
+| Judgment | `reflect judgment, divergent, synthesizer` | `opus` | `references/judgment-reviewer.md` |
+| Tooling | `reflect tooling` | `fable` | `references/tooling-reviewer.md` |
+| Divergent | `reflect judgment, divergent, synthesizer` | `opus` | `references/divergent-reviewer.md` |
 
-The Tooling reviewer runs on a different tier from the other two so the panel does not share one model's blind spots. Fable and Opus are both Claude models, so the panel differs by tier, not by model family, until a non-Claude reviewer is added.
+The Tooling reviewer is the Fable second opinion, on a different tier from the other two so the panel does not share one model's blind spots. Fable and Opus are both Claude models, so the panel differs by tier, not by model family, until a non-Claude reviewer is added.
 
 Pass each template verbatim, substituting the transcript path or digest where marked. Reviewers return findings in the Agent result.
 
 ## 3. Synthesize
 
-One Agent call, `subagent_type: "agent-skills:jstack-reader"`, `model` from the `reflect judgment, divergent, synthesizer` line (default `fable`). It spot-verifies citations through MCP, which the reader keeps. Pass `references/synthesizer.md` verbatim, with each reviewer's full output inlined where marked. It returns an Accepted / Rejected / Backlog list.
+One Agent call, `subagent_type: "agent-skills:jstack-reader"`, `model` from the `reflect judgment, divergent, synthesizer` line (default `opus`). It spot-verifies citations through MCP, which the reader keeps. Pass `references/synthesizer.md` verbatim, with each reviewer's full output inlined where marked. It returns an Accepted / Rejected / Backlog list.
 
 ## 4. Structural enforcement check
 

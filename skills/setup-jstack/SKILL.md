@@ -20,7 +20,7 @@ Show every role with its model. Also list each line step 1 dropped. Ask whether 
 
 For panel roles (arena runners, architect runners, interrogate reviewers) the value is a list, and one subagent runs per entry, `inherit` entries included, so the list length sets the count. `arena cross-judge pool` is also a list, but Arena picks the one entry that wrote no candidate when it can. `swarm workers` is the default model for every worker unless a race or comparison assigns another model per arm.
 
-Fable is the strongest and most expensive tier. Moving a judgment role to `opus` or a code role to `sonnet` spends fewer tokens. Shortening a panel list removes one subagent per entry.
+Opus runs every role by default. Fable appears only as the second-opinion reviewer (interrogate's Reviewer B, arena's cross-judge, reflect's Tooling reviewer) and is the most expensive tier. Moving a role to `sonnet` spends fewer tokens. Shortening a panel list removes one subagent per entry.
 
 ### 3. Validate
 
@@ -39,19 +39,19 @@ feature, refactoring: opus
 bug-fix: opus
 perf-issue: opus
 hillclimb: opus
-judgment and prose: fable
-hardest tasks: fable
+judgment and prose: opus
+hardest tasks: opus
 how explorer: sonnet
-how explainer: fable
+how explainer: opus
 why investigators: sonnet
-why synthesizer: fable
-reflect tooling: opus
-reflect judgment, divergent, synthesizer: fable
-arena runners: fable, opus
-arena cross-judge pool: fable, opus
-swarm workers: sonnet
-architect runners: fable, opus
-interrogate reviewers: fable, opus
+why synthesizer: opus
+reflect tooling: fable
+reflect judgment, divergent, synthesizer: opus
+arena runners: opus, opus
+arena cross-judge pool: fable
+swarm workers: opus
+architect runners: opus, opus
+interrogate reviewers: opus, fable
 ```
 
 ### 5. Confirm
