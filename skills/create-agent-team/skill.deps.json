@@ -1,0 +1,12 @@
+{
+  "gh": {
+    "darwin": "brew install gh",
+    "linux": "sudo apt install gh (other distros: https://cli.github.com)",
+    "win32": "winget install GitHub.cli"
+  },
+  "git": {
+    "darwin": "brew install git",
+    "linux": "sudo apt install git",
+    "win32": "winget install Git.Git"
+  }
+}

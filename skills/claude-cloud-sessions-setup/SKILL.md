@@ -1,6 +1,6 @@
 ---
 name: claude-cloud-sessions-setup
-description: Set up Claude Code cloud sessions for the current repo — GitHub access, a cloud environment with a setup script built from the repo's stack, a smoke session, and optionally a routine that ships issues labelled `claude`.
+description: Set up Claude Code cloud sessions for the current repo — GitHub access, a cloud environment with a setup script built from the repo's stack, and a smoke session. The create-agent-team skill builds routines on top of it.
 disable-model-invocation: true
 ---
 
@@ -38,7 +38,7 @@ Draft the cloud environment for the user to create at https://claude.ai/code (en
 
 - **Name**: after the repo.
 - **Network access**: Trusted, unless step 1 found a download host outside the default allowlist; then Custom with the defaults plus those hosts.
-- **Setup script**: installs only what the VM lacks against step 1's stack, using CLOUD-FACTS.md's preinstalled list: a runtime version it doesn't ship, apt packages, the package manager at the pinned version, and the user's plugins (`claude plugin marketplace add <owner/repo>` then `claude plugin install <plugin>@<marketplace>`, each `|| true`). End it by printing each tool's version. Hold it to the script requirements in CLOUD-FACTS.md.
+- **Setup script**: installs only what the VM lacks against step 1's stack, using CLOUD-FACTS.md's preinstalled list: a runtime version it doesn't ship, apt packages, the package manager at the pinned version, and the user's plugins (`claude plugin marketplace add <owner/repo>` then `claude plugin install <plugin>@<marketplace>`, each `|| true`). End it by printing each tool's version, then one comment line per plugin naming its current version (`# agent-skills 4.1.0`). The environment's filesystem is a snapshot, so a plugin release reaches cloud sessions only when the snapshot rebuilds. Bumping that line after a release is the edit that rebuilds it. Hold it to the script requirements in CLOUD-FACTS.md.
 - **Environment variables**: only what the build needs. API keys for model providers stay out of it.
 - **A `SessionStart` hook in the repo**, offered alongside: the setup script lives on claude.ai and is cached, so it provisions the machine; a committed hook, guarded by `CLAUDE_CODE_REMOTE=true`, readies the project (dependencies installed, the runtime first on `PATH` via `CLAUDE_ENV_FILE`) and fills in any system package the script missed, installing only what `dpkg -s` reports missing. The hook travels with the repo; the script keeps sessions fast.
 
@@ -52,28 +52,15 @@ Give the user this prompt for a first session in the new environment, filled in 
 
 The user pastes back the report. Fix the setup script for missing or wrong-version tools and missing skills, and have them rerun until it's clean. For tests that fail only on the cloud VM, offer to make them portable or skip them there, in the repo. Reproduce them first in a local container that matches the VM (CLOUD-FACTS.md, Reproducing the VM), and run the whole suite there a few times: a rare red that passes alone is a race, and its real error is what to fix. Done when the smoke session reports every proving command green, or every red one is understood and the user has chosen what to do with it.
 
-## 5. Offer the issue routine
+## 5. Offer the agent team
 
-Ask whether the user wants issues shipped by labelling them. If not, skip to step 6.
-
-1. When the repo has a UI or makes files a person would look at, give runs proof: copy [scripts/shot.mjs](scripts/shot.mjs) and [scripts/proof.sh](scripts/proof.sh) into the repo's `scripts/`, and in a cloud session start the app, take one screenshot and publish it, so step 6 of the routine's prompt is filled from what worked. Turn on deleting a PR's branch when it merges, after the user agrees (`gh repo edit --delete-branch-on-merge`), so `claude/` branches don't pile up. Create the labels, after the user agrees: `claude` (hand it over), `claude-working` (a run claimed it), `claude-stuck` (a run stopped; see its comment).
-2. Fill [ROUTINE-PROMPT.md](ROUTINE-PROMPT.md) from step 1 and give it to the user as one copyable block. Ask which review skills, if any, every PR should pass through, and put them in its Review step.
-3. The user creates the routine at https://claude.ai/code/routines: the filled prompt, the model, the repo, the environment from step 3, the trigger **Issue: Labeled** filtered to `claude` (a schedule only if they want a fallback; its minimum is hourly), and **every connector removed**.
-4. Test it on one issue whose work is code a test can prove: comment which items to take, then add the label. Watch the issue until it shows `claude-working` and a comment linking the session.
-
-5. Offer the conflicts routine: when several PRs from the issue routine are open at once, each merge can leave the others conflicting. Fill [CONFLICTS-PROMPT.md](CONFLICTS-PROMPT.md) and give it to the user for a second routine with the trigger **PR merged** filtered to base branch `<default branch>`, the same environment, and every connector removed.
-
-6. Offer the triage routine, so issues queue themselves: fill [TRIAGE-PROMPT.md](TRIAGE-PROMPT.md), create its three labels after the user agrees (`claude-ready`, `needs-design`, `needs-hitl`), tell the user that `needs-design` issues are worked by an agent on their machine with the repo's design tool, in batches they approve, and give it to the user for a third routine with the triggers **Issue: Opened** (no filter) and a daily schedule, the same environment, and every connector removed. Keep step 9 of the issue routine's prompt only when the triage routine is saved. Run it once with **Run now** to triage the backlog.
-
-7. Offer the merge routine, so a safe PR merges without anyone: agree its human-in-the-loop list and size limits with the user, fill [MERGE-PROMPT.md](MERGE-PROMPT.md), and give it to the user for a fourth routine with the trigger **Pull request: Opened** and no filter (MERGE-PROMPT.md says why), the same environment, and every connector removed. Pushing the default branch is this routine's whole job, so ask the user plainly whether a PR it judges safe should merge with no one looking; when they'd rather click merge themselves, change its step 5 to label the PR `ready-to-merge` and comment why.
-
-Done when a run has claimed the test issue, or the user declined the routine; and the conflicts, triage and merge routines are saved, or declined.
+Ask whether the user wants the repo's work to run on its own: issues triaged and shipped by labelling them, PRs gated and merged, `main` kept green, with only decisions sent to them. If yes, read `${CLAUDE_PLUGIN_ROOT}/skills/create-agent-team/SKILL.md` and work through it from its step 1, which builds those routines on this environment. Done when the user has declined, or that skill's step 1 has started.
 
 ## 6. Hand over
 
 Tell the user, in a few lines:
 
-- how to start work: `claude --cloud "<task>"`, claude.ai/code, the phone app, or the `claude` label;
+- how to start work: `claude --cloud "<task>"`, claude.ai/code, the phone app, or the `claude` label when the agent team is set up;
 - how work comes back: a branch and PR to review and merge, then pull locally; `claude --teleport` to finish a session by hand;
 - what stays local: each local-only dependency from step 1, and the kinds of tasks that need it;
 - the costs: cloud sessions and routines draw on the subscription's usage limits, in parallel; usage credits at claude.ai/settings/usage decide whether routines bill overage past the limit.
