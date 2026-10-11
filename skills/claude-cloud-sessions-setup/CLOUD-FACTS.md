@@ -33,8 +33,8 @@ apt-get install -y --no-install-recommends libnss3 libdbus-1-3 libatk1.0-0t64 li
 
 A run can show its work in the PR, not just say it passed:
 
-- **Screenshots**: `scripts/shot.mjs` (in this skill; copy it to the repo's `scripts/`) drives Chrome Headless Shell over the DevTools protocol with Node alone: open a page, click or run script, wait for text, save a PNG. It needs the headless-browser libraries above. A repo that already downloads a browser can point it there with `--browser`.
-- **Images in a PR**: GitHub's REST API takes no attachments, so `scripts/proof.sh` (also here) pushes them to a `proof` branch that's never merged, one folder per issue, and prints Markdown linking `https://github.com/<owner>/<repo>/blob/proof/<folder>/<file>?raw=true`. In a private repo only people with access see them, as with the PR itself. Git only, so it works where `gh` can't.
+- **Screenshots**: `scripts/shot.mjs` (in the create-agent-team skill; copy it to the repo's `scripts/`) drives Chrome Headless Shell over the DevTools protocol with Node alone: open a page, click or run script, wait for text, save a PNG. It needs the headless-browser libraries above. A repo that already downloads a browser can point it there with `--browser`.
+- **Images in a PR**: GitHub's REST API takes no attachments, so `scripts/proof.sh` (also there) pushes them to a `proof` branch that's never merged, one folder per issue, and prints Markdown linking `https://github.com/<owner>/<repo>/blob/proof/<folder>/<file>?raw=true`. In a private repo only people with access see them, as with the PR itself. Git only, so it works where `gh` can't.
 
 ## Reproducing the VM
 
@@ -55,7 +55,7 @@ Run it with `--platform linux/amd64 --cpus 4 --memory 16g`, and feed it the work
   - exit 0, or the session fails to start (`|| true` on non-critical lines);
   - finish within about 5 minutes, or the environment isn't cached. Run independent installs in parallel with `&` and `wait`.
 - Its filesystem is snapshotted and reused by later sessions.
-- The snapshot is rebuilt when the script or the allowed hosts change, and about every 7 days.
+- The snapshot is rebuilt when the script or the allowed hosts change, and about every 7 days. Plugins installed by the script stay at the version the snapshot was built with until then: a plugin release needs a script edit, such as bumping a `# <plugin> <version>` comment, to reach new sessions (seen October 2026).
 - Running services aren't kept in the snapshot. Start them per session, or with a SessionStart hook in the repo.
 
 ## Network
