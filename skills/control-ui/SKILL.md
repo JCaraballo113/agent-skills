@@ -1,6 +1,6 @@
 ---
 name: control-ui
-description: Build or adapt a local browser/CDP harness to drive and inspect a web, IDE, or Electron UI. Use for local UI verification, screenshots, accessibility snapshots, perf profiles, visual diffs, or reproducing UI bugs.
+description: Build or adapt a local browser/CDP harness to drive and inspect a web, IDE, or Electron UI. Use for local UI verification, screenshots, accessibility snapshots, perf profiles, visual diffs, reproducing UI bugs, or when jstack-mode's playbook step needs a browser, Electron, or web UI driven on its real surface.
 ---
 
 # Control UI
@@ -13,7 +13,7 @@ Use local browser automation to verify UI behavior with evidence. First reuse th
 - Verifying visual or accessibility changes with screenshots and snapshots.
 - Checking local web, IDE, or Electron behavior before shipping.
 - Capturing console logs, network logs, CPU profiles, traces, or heap snapshots.
-- Creating before/after evidence for `verify-this`.
+- Creating before/after evidence for a PR or a project's `verify-<app>` skill.
 
 ## Setup Pattern
 

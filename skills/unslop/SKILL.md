@@ -1,7 +1,6 @@
 ---
 name: unslop
-description: Cut AI tells from any writing. Must always apply.
-disable-model-invocation: true
+description: Cuts AI tells from any writing (AI vocabulary, filler, hedging, em dashes, mid-sentence colons, mannered prose) by a numbered rule catalog that other skills cite. Use on every prose surface before it ships, replies, docs, PR descriptions, commit messages and log rows included, when the user asks to unslop or de-AI some text, or when jstack-mode's playbook step calls for it.
 ---
 
 # Unslop

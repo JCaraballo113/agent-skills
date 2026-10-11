@@ -1,7 +1,5 @@
 ---
-name: principle-encode-lessons-in-structure
 description: "Apply when you catch yourself writing the same instruction a second time, or notice a recurring correction. Encode the rule as a lint, metadata flag, runtime check, or script instead of more text."
-disable-model-invocation: true
 ---
 
 # Encode Lessons in Structure
@@ -20,9 +18,9 @@ When you catch yourself writing the same instruction a second time:
 
 **Corollary:** If the fix is structural, only use the structural fix. The instruction is the symptom.
 
-When the human intervenes or tests fail, decide if it's a one-off or a pattern. Route it: one-off -> brain note, recurring fix -> skill or lint rule, systemic issue -> principle. Close the loop: don't just record; apply now or create a concrete todo.
+When the human intervenes or tests fail, decide if it's a one-off or a pattern. Route it: one-off -> memory note, recurring fix -> skill or lint rule, systemic issue -> principle. Close the loop: don't just record; apply now or create a concrete todo.
 
 **Anti-patterns:**
 - Acknowledging without recording ("I'll keep that in mind" does not persist)
-- Recording without routing (a brain note about a lint rule that should exist is wasted unless the lint rule gets implemented)
+- Recording without routing (a memory note about a lint rule that should exist is wasted unless the lint rule gets implemented)
 - Fixing without generalizing (fixing one instance while leaving the recurring pattern intact)

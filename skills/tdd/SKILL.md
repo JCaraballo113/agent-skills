@@ -1,7 +1,6 @@
 ---
 name: tdd
-description: "Use only when the user explicitly asks for TDD, a failing test, or a regression test, OR when the bug has an obvious cheap local test target. Skip when the test path is unclear, expensive, integration-heavy, or not requested."
-disable-model-invocation: true
+description: "Fixes a bug test-first, with a focused regression test that fails before the fix and passes after it. Use when the user explicitly asks for TDD, a failing test, or a regression test, when the bug has an obvious cheap local test target, or when jstack-mode's Bug fix playbook calls for it. Skip when the test path is unclear, expensive, integration-heavy, or not requested."
 ---
 
 # TDD Bug Fix

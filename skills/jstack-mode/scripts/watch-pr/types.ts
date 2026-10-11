@@ -1,3 +1,4 @@
+import type { ReviewBotId } from "./review-bots.ts";
 declare const prNumberBrand: unique symbol;
 export type PrNumber = number & { readonly [prNumberBrand]: "PrNumber" };
 export type NonEmpty<T> = readonly [T, ...T[]];
@@ -61,12 +62,13 @@ export interface ReviewComment {
   readonly path: string | null;
   readonly line: number | null;
   readonly createdAt: string;
+  readonly reviewId: string | null;
 }
 export interface ReviewThread {
   readonly id: string;
   readonly firstComment: ReviewComment | null;
-  readonly isBugbot: boolean;
-  readonly bugbotReviewPasses: number;
+  readonly reviewBot: ReviewBotId | null;
+  readonly reviewBotPasses: number;
 }
 interface CheckDetails {
   readonly name: string;

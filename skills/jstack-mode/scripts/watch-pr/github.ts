@@ -1,8 +1,9 @@
 import { spawn } from "node:child_process";
 import type * as T from "./types.ts";
 import { nonEmpty, parsePrNumber } from "./types.ts";
+import { reviewBotFor, reviewPassKey } from "./review-bots.ts";
 export const REVIEW_THREADS_QUERY =
-  "\nquery ReviewThreads($owner: String!, $repo: String!, $pr: Int!) {\n  repository(owner: $owner, name: $repo) {\n    pullRequest(number: $pr) {\n      reviewThreads(first: 100) {\n        nodes {\n          id\n          isResolved\n          comments(first: 10) {\n            nodes {\n              body\n              createdAt\n              path\n              line\n              author { login }\n            }\n          }\n        }\n      }\n    }\n  }\n}\n";
+  "\nquery ReviewThreads($owner: String!, $repo: String!, $pr: Int!) {\n  repository(owner: $owner, name: $repo) {\n    pullRequest(number: $pr) {\n      reviewThreads(first: 100) {\n        nodes {\n          id\n          isResolved\n          comments(first: 10) {\n            nodes {\n              body\n              createdAt\n              path\n              line\n              author { login }\n              pullRequestReview { id }\n            }\n          }\n        }\n      }\n    }\n  }\n}\n";
 export const PR_COMMIT_STATUS_QUERY =
   "\nquery PrCommitStatuses($owner: String!, $repo: String!, $pr: Int!) {\n  repository(owner: $owner, name: $repo) {\n    pullRequest(number: $pr) {\n      commits(last: 50) {\n        nodes {\n          commit {\n            oid\n            statusCheckRollup {\n              state\n            }\n          }\n        }\n      }\n    }\n  }\n}\n";
 export const PR_CHECK_ROLLUP_QUERY =
@@ -308,6 +309,15 @@ export function mapRollupNode(value: unknown): T.Check | null {
     ? { ...details, link, kind: "passed", reportedState: state }
     : { ...details, link, kind: "failed", reportedState: state || "FAILURE" };
 }
+// A comment outside any review has no pullRequestReview, and older fixtures
+// omit the field, so both read as no review.
+function reviewId(value: unknown): string | null {
+  if (value === undefined || value === null) return null;
+  return string(
+    record(value, "review comment.pullRequestReview").id,
+    "review comment.pullRequestReview.id"
+  );
+}
 function parseComment(value: unknown): T.ReviewComment {
   const object = record(value, "review comment");
   const author =
@@ -328,34 +338,8 @@ function parseComment(value: unknown): T.ReviewComment {
           ? Number(object.line)
           : missing("review comment.line", object.line),
     createdAt: string(object.createdAt, "review comment.createdAt"),
+    reviewId: reviewId(object.pullRequestReview),
   };
-}
-function isBugbot(comment: T.ReviewComment | null): boolean {
-  if (comment === null) return false;
-  const author = (comment.authorLogin ?? "").toLowerCase();
-  const body = comment.body.toLowerCase();
-  return (
-    author.includes("bugbot") ||
-    (author === "cursor" &&
-      [
-        "bugbot",
-        "cursor_automation_id",
-        "agentic security review",
-        "description start",
-        "severity",
-      ].some((token) => body.includes(token)))
-  );
-}
-function passKey(comment: T.ReviewComment | null): string | null {
-  if (comment === null) return null;
-  for (const pattern of [
-    /RUN_ID:\s*([a-zA-Z0-9_.:-]+)/,
-    /CURSOR_AUTOMATION_ID:\s*([a-zA-Z0-9_.:-]+)/,
-  ]) {
-    const match = pattern.exec(comment.body);
-    if (match?.[1]) return match[1];
-  }
-  return null;
 }
 export function parseReviewThreads(value: unknown): readonly T.ReviewThread[] {
   const nodes = list(
@@ -381,23 +365,34 @@ export function parseReviewThreads(value: unknown): readonly T.ReviewThread[] {
       resolved: thread.isResolved,
     });
   }
-  const keys = new Set<string>();
-  let keyless = false;
+  // A pass is one review run by one bot. Each thread carries the pass count
+  // of the bot that opened it, and a human thread carries zero.
+  const passes = new Map<string, { keys: Set<string>; keyless: boolean }>();
   for (const thread of threads) {
-    if (!isBugbot(thread.firstComment)) continue;
-    const key = passKey(thread.firstComment);
-    if (key === null) keyless = true;
-    else keys.add(key);
+    const bot = reviewBotFor(thread.firstComment);
+    if (bot === null || thread.firstComment === null) continue;
+    const entry = passes.get(bot.id) ?? { keys: new Set(), keyless: false };
+    passes.set(bot.id, entry);
+    const key = reviewPassKey(bot, thread.firstComment);
+    if (key === null) entry.keyless = true;
+    else entry.keys.add(key);
   }
-  const passes = keys.size > 0 ? keys.size : keyless ? 1 : 0;
+  const passCount = (botId: string): number => {
+    const entry = passes.get(botId);
+    if (entry === undefined) return 0;
+    return entry.keys.size > 0 ? entry.keys.size : entry.keyless ? 1 : 0;
+  };
   return threads
     .filter((thread) => !thread.resolved)
-    .map(({ id, firstComment }) => ({
-      id,
-      firstComment,
-      isBugbot: isBugbot(firstComment),
-      bugbotReviewPasses: passes,
-    }));
+    .map(({ id, firstComment }) => {
+      const bot = reviewBotFor(firstComment);
+      return {
+        id,
+        firstComment,
+        reviewBot: bot?.id ?? null,
+        reviewBotPasses: bot === null ? 0 : passCount(bot.id),
+      };
+    });
 }
 export function parsePullRequest(
   value: unknown,

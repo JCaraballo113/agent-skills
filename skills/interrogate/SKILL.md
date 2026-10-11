@@ -1,7 +1,6 @@
 ---
 name: interrogate
-description: "Use for \"interrogate\", \"adversarial review\", \"multi-model review\", \"challenge this\", \"stress test this code\", \"find blind spots\", or \"tear this apart\". Multiple LLM reviewers challenge changes from independent angles."
-disable-model-invocation: true
+description: "Adversarial multi-model review, where one read-only reviewer per configured model challenges a change from an independent angle and the lead returns a synthesized verdict. Use for /agent-skills:interrogate, \"interrogate\", \"adversarial review\", \"multi-model review\", \"challenge this\", \"stress test this code\", \"find blind spots\", \"tear this apart\", a contested design before shipping, or when jstack-mode's playbook step calls for it."
 ---
 
 # Interrogate
@@ -24,16 +23,18 @@ Before spawning reviewers, state the intent in one clear paragraph from the user
 
 ## Step 3, Spawn Reviewers
 
-Launch all reviewers in a single message with the Task tool, one per entry on the `interrogate reviewers` line in `~/.cursor/rules/pstack-models.mdc`, labeled Reviewer A, B, and so on to match the entry count. If the rule or that line is missing, use the table defaults.
+Launch all reviewers in a single message with the Agent tool, one per entry on the `interrogate reviewers` line in `~/.claude/rules/jstack-models.md`, labeled Reviewer A, B, and so on to match the entry count. If the rule or that line is missing, use the table defaults.
 
 | Subagent | Default model |
 |----------|---------------|
-| Reviewer A | `claude-opus-5-5-xhigh` |
-| Reviewer B | `grok-4.7-xhigh-fast` |
+| Reviewer A | `fable` |
+| Reviewer B | `opus` |
 
-Each reviewer gets `subagent_type: generalPurpose`, `readonly: true`, and `model` set to its configured entry, or its table default when there is no configured line. Omit `model` for an `auto` or `inherit-parent` entry, so that reviewer runs on the parent model.
+Each reviewer gets `subagent_type: "agent-skills:jstack-reader"` and `model` set to its configured entry, or its table default when there is no configured line. Omit `model` for an `inherit` entry, so that reviewer runs on the parent model.
 
-If the Task tool rejects a configured entry, run that reviewer on its family's table default and say so. Families go by prefix: `claude-*` and `grok-*`. With no family match, use Reviewer A's default. If it rejects a table default, spawn with the closest equivalent from the valid slugs in its error message (prefer the same family and reasoning tier), and open a separate PR to update the default table. Do not block the review on the slug issue. Never treat an alias entry as a rejected slug or apply either fallback to it.
+Fable and Opus are both Claude models. The defaults differ by tier, not by model family, until a non-Claude reviewer is added to the line. Weigh their agreement with that in mind.
+
+If the Agent tool rejects a configured entry, run that reviewer on its table default and say so. With no table default for its label, use Reviewer B's default. Do not block the review on a rejected entry. Never treat an `inherit` entry as rejected or apply the fallback to it.
 
 Read `references/reviewer-prompt.md` and fill in the same template for every reviewer with the stated intent, the diff or file contents, the rubric from `references/rubric.md`, and the code-quality lens from `references/code-quality-review.md`.
 

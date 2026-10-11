@@ -1,12 +1,12 @@
 ---
 name: ketchup
-description: "Catch the user up on everything in this chat since their last message, in plain words. Give each action item an executive summary with enough context to make the call. Use for /ketchup."
+description: "Catch the user up on everything in this chat since their last message, in plain words. Give each action item an executive summary with enough context to make the call. Use for /agent-skills:ketchup."
 disable-model-invocation: true
 ---
 
 # Ketchup
 
-Catch the user up on everything in this chat since the last message they wrote before `/ketchup`. Notifications and subagent results are not their messages. Write in the plain voice of [`/bro`](../bro/SKILL.md), and skip its restating step. Assume the user remembers their last message and nothing after it. Call each PR, branch, or agent by a name they would know, not by a label you invented during the work.
+Catch the user up on everything in this chat since the last message they wrote before `/agent-skills:ketchup`. Notifications and subagent results are not their messages. Write in the plain voice of the [**bro**](../bro/SKILL.md) skill, and skip its restating step. Assume the user remembers their last message and nothing after it. Call each PR, branch, or agent by a name they would know, not by a label you invented during the work.
 
 ## Gather what changed
 

@@ -1,14 +1,13 @@
 ---
 name: how
-description: "Use for \"how does X work\", code walkthroughs before changing something, and placement / ownership / layering questions (\"where should this live\", \"which package owns this\", \"is this the right layer\"). Explains subsystem architecture, runtime flow, onboarding mental models. Use why for motivation."
-disable-model-invocation: true
+description: "Explains how a part of the codebase works, its architecture, runtime flow and where things live, through read-only explorer and explainer subagents. Use for /agent-skills:how, \"how does X work\", a code walkthrough before changing something, placement, ownership and layering questions (\"where should this live\", \"which package owns this\", \"is this the right layer\"), onboarding onto a subsystem, or when jstack-mode's playbook step calls for it. Use why for motivation."
 ---
 
 # How
 
 Explore the codebase to answer "how does X work?" questions. Produce architectural explanations at the level of a senior engineer onboarding onto a subsystem, enough to build a working mental model, not so much that it reads like annotated source code.
 
-Every spawn is a Task subagent with `subagent_type: generalPurpose` and `readonly: true`. Explorers use the `how explorer` line in the `pstack-models.mdc` rule (default `grok-4.7-xhigh-fast`), and every explainer uses the `how explainer` line (default `claude-opus-5-5-xhigh`). Set `model` to that line's value, or to the default if the rule or the line is missing. Leave `model` unset when the value is `auto` or `inherit-parent`. If the Task tool rejects a slug, use the default and say so. If it rejects the default, use the closest valid slug of the same family from its error message.
+Every spawn is an Agent call with `subagent_type: "agent-skills:jstack-reader"`. Explorers use the `how explorer` line in `~/.claude/rules/jstack-models.md` (default `sonnet`), and every explainer uses the `how explainer` line (default `fable`). Set `model` to that line's value, or to the default if the rule or the line is missing. Leave `model` unset when the value is `inherit`. If the Agent tool rejects a value, use the default and say so.
 
 ## 1. Assess complexity
 

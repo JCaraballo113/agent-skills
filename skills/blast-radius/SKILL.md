@@ -1,7 +1,6 @@
 ---
 name: blast-radius
-description: "Find what a change could break somewhere else before it ships, beyond the diff, and prove the one fact it's safe because of by running real code instead of writing it up. Use for 'blast radius of X', 'what could this break', or reviewing a small diff you don't trust."
-disable-model-invocation: true
+description: "Finds what a change could break somewhere else before it ships, beyond the diff, and proves the one fact it's safe because of by running real code instead of writing it up. Use for /agent-skills:blast-radius, 'blast radius of X', 'what could this break', reviewing a small diff you don't trust, or when jstack-mode's playbook step calls for it."
 ---
 
 # Blast radius

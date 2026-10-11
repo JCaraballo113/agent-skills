@@ -22,10 +22,33 @@ prs=$(mktemp)
 gh pr list --author "@me" --state all --limit 1000 \
 	--json number,state,headRefName 2>/dev/null > "$prs" || echo "[]" > "$prs"
 
-# Transcripts dir: ~/.cursor/projects/<slugified-repo-path>/agent-transcripts.
-slug=$(printf '%s' "$main_wt" | sed 's#^/##; s#/#-#g')
-transcripts="$HOME/.cursor/projects/$slug/agent-transcripts"
+# Claude Code keeps each session's transcript in ~/.claude/projects/<project>/,
+# where <project> is the session's working directory with every
+# non-alphanumeric character replaced by "-". A chat started in the main
+# checkout and a chat started inside a worktree land in different folders, so
+# both are scanned for each worktree.
+projects="$HOME/.claude/projects"
+project_dir() { printf '%s/%s' "$projects" "$(printf '%s' "$1" | sed 's/[^A-Za-z0-9]/-/g')"; }
 now=$(date +%s)
+
+# GNU and BSD stat and date spell mtime and epoch formatting differently.
+if stat --version >/dev/null 2>&1; then
+	mtimes() { xargs -0 stat -c '%Y %n' 2>/dev/null; }
+else
+	mtimes() { xargs -0 stat -f '%m %N' 2>/dev/null; }
+fi
+if date --version >/dev/null 2>&1; then
+	day_of() { date -d "@$1" '+%Y-%m-%d'; }
+else
+	day_of() { date -r "$1" '+%Y-%m-%d'; }
+fi
+# Files under the given dirs that mention any of the given fixed strings,
+# NUL-separated. ripgrep when present, else grep.
+if command -v rg >/dev/null 2>&1; then
+	mentions() { local a=$1 b=$2; shift 2; rg -l -0 -F -e "$a" -e "$b" "$@" 2>/dev/null; }
+else
+	mentions() { local a=$1 b=$2; shift 2; grep -rlF --null -e "$a" -e "$b" "$@" 2>/dev/null; }
+fi
 
 printf "SIZE\tAGE\tMERGED\tDIRTY\tREMOTE\tPR\tLAST_CHAT\tBUCKET\tWORKTREE\n"
 
@@ -63,11 +86,14 @@ git worktree list --porcelain | awk '/^worktree /{print $2}' | while read -r wt;
 	# Most recent chat whose transcript operated in this worktree. Match path
 	# followed by "/" or a quote so glint-482 does not match glint-482-r37.
 	last="-"; last_ts=0
-	if [ -d "$transcripts" ]; then
-		f=$(rg -l -e "${wt}/" -e "${wt}\"" "$transcripts" 2>/dev/null \
-			| xargs stat -f '%m %N' 2>/dev/null | sort -rn | head -1)
+	dirs=()
+	for d in "$(project_dir "$main_wt")" "$(project_dir "$wt")"; do
+		[ -d "$d" ] && dirs+=("$d")
+	done
+	if [ "${#dirs[@]}" -gt 0 ]; then
+		f=$(mentions "${wt}/" "${wt}\"" "${dirs[@]}" | mtimes | sort -rn | head -1)
 		if [ -n "$f" ]; then last_ts=$(echo "$f" | awk '{print $1}')
-			last=$(date -r "$last_ts" '+%Y-%m-%d' 2>/dev/null); fi
+			last=$(day_of "$last_ts" 2>/dev/null); fi
 	fi
 	recent=$([ "$last_ts" -gt 0 ] 2>/dev/null && [ $(( (now - last_ts) / 86400 )) -le 4 ] && echo yes || echo no)
 
