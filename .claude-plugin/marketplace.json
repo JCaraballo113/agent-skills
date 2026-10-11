@@ -9,7 +9,7 @@
     {
       "name": "agent-skills",
       "source": "./",
-      "description": "Agent skills for project setup, review, UX, and cleanup workflows."
+      "description": "Agent skills for project setup and UX, plus jstack: a ported pstack working style with playbooks, principles and review panels."
     }
   ]
 }
