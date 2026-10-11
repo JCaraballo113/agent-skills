@@ -1,6 +1,6 @@
 ---
 name: create-agent-team
-description: Set up a repo's agent team, routines that triage issues, ship PRs with jstack, gate merges and keep main green, sending the creator only decisions as cards.
+description: Set up a repo's agent team, routines that triage issues, ship PRs with jstack, gate merges and keep main green, each role a Claude bot, sending the creator only decisions as cards.
 disable-model-invocation: true
 ---
 
@@ -12,7 +12,7 @@ The team decides when work runs and who owns it. How a run does the work is jsta
 
 Deps are in [skill.deps.json](skill.deps.json); when one is missing, give the user its install command for this OS and stop.
 
-Work through the steps in order; each ends on its completion criterion. The roles and conventions the steps build are reference at the end. The prompt templates are in [prompts/](prompts/), one per role.
+Work through the steps in order; each ends on its completion criterion. The roles and conventions the steps build are reference at the end. The prompt templates are in [prompts/](prompts/), one per role; each role has a Claude bot in [bots/](bots/).
 
 ## 1. Survey
 
@@ -30,7 +30,7 @@ Done when you can name, for each held PR, the rule that held it, and for each ex
 
 ## 2. Plan
 
-Write the plan as a doc (a Claude Doc when the connector exists): the roles mapped onto this repo, what each existing routine becomes, the rules the gate holds on, and the conventions. End with the decisions only the creator can make, each with a recommended default: typically the size limit, what still holds for a person, the review skill the gate runs, whether design moves somewhere they can sign off from a phone, and how often they hear from the team.
+Write the plan as a doc (a Claude Doc when the connector exists): the roles mapped onto this repo, each introduced by its bot (`node bots/sheet.mjs > cast.html` draws the cast; share it beside the plan), what each existing routine becomes, the rules the gate holds on, and the conventions. End with the decisions only the creator can make, each with a recommended default: typically the size limit, what still holds for a person, the review skill the gate runs, whether design moves somewhere they can sign off from a phone, and how often they hear from the team.
 
 Done when the creator has answered or accepted the defaults. Building starts on their word.
 
@@ -91,16 +91,19 @@ Done when all three hold. Then tell the creator what's left for them, one line e
 
 ## Roles
 
-| Role | Trigger | Job | Template |
-|---|---|---|---|
-| Triage | new issue, daily | sort each item into ship, design, person or done; scope one run's worth and label `claude` (queue cap about 4) | [triage.md](prompts/triage.md) |
-| Ship | `claude` label | claim (`claude-working`), build with jstack-mode within the size limit, prove it with something a person can see, open a ready PR that `Refs` the issue; `claude-stuck` when it can't finish; then promote the next `claude-ready` | [ship.md](prompts/ship.md) |
-| Gate | PR opened, hourly | hold or prove (merge with `main`, tests, review, fix findings), merge via `git push origin HEAD:main`, post a verdict; the hourly run sweeps a few unjudged PRs | [gate.md](prompts/gate.md) |
-| Conflicts | PR merged | merge the base into each conflicting PR and resolve it | [conflicts.md](prompts/conflicts.md) |
-| Main health | nightly | full suite on a fresh `main`; open or close `main-red` issues and queue the fix | [main-health.md](prompts/main-health.md) |
-| Design pass | nightly | draw boards for `needs-design` issues, then swap to `needs-signoff` | [design-pass.md](prompts/design-pass.md) |
-| Morning board | daily | one phone-sized board (merged, `main`, stuck) plus a card per new decision or sign-off | [morning-board.md](prompts/morning-board.md) |
-| Playbook review | weekly | count holds and releases; propose loosening a rule the creator keeps overriding, and lessons for the domain briefs | [playbook-review.md](prompts/playbook-review.md) |
+| Role | Bot | Trigger | Job | Template |
+|---|---|---|---|---|
+| Coordinator | Cue | always on, in a Project | starts a fresh thread for each scheduled role with work, posts the board and cards, relays answers | none (its routines' briefs, step 5) |
+| Triage | Tag | new issue, daily | sort each item into ship, design, person or done; scope one run's worth and label `claude` (queue cap about 4) | [triage.md](prompts/triage.md) |
+| Ship | Bolt | `claude` label | claim (`claude-working`), build with jstack-mode within the size limit, prove it with something a person can see, open a ready PR that `Refs` the issue; `claude-stuck` when it can't finish; then promote the next `claude-ready` | [ship.md](prompts/ship.md) |
+| Gate | Stamp | PR opened, hourly | hold or prove (merge with `main`, tests, review, fix findings), merge via `git push origin HEAD:main`, post a verdict; the hourly run sweeps a few unjudged PRs | [gate.md](prompts/gate.md) |
+| Conflicts | Mend | PR merged | merge the base into each conflicting PR and resolve it | [conflicts.md](prompts/conflicts.md) |
+| Main health | Pulse | nightly | full suite on a fresh `main`; open or close `main-red` issues and queue the fix | [main-health.md](prompts/main-health.md) |
+| Design pass | Doodle | nightly | draw boards for `needs-design` issues, then swap to `needs-signoff` | [design-pass.md](prompts/design-pass.md) |
+| Morning board | Dawn | daily | one phone-sized board (what waits on the creator, what happened overnight, what's in progress), each line spoken by its role's bot, plus a card per new decision or sign-off | [morning-board.md](prompts/morning-board.md) |
+| Playbook review | Page | weekly | count holds and releases; propose loosening a rule the creator keeps overriding, and lessons for the domain briefs | [playbook-review.md](prompts/playbook-review.md) |
+
+The bots are the team's faces: [bots/art.mjs](bots/art.mjs) draws each in six moods (idle, work, done, stumped, nap, ask), [bots/board-widget.mjs](bots/board-widget.mjs) renders the morning board with them animated, and `node --test bots/*.test.mjs` checks both. Name a role by its bot wherever the creator reads it (board lines, cards' context lines).
 
 The design pass belongs only to a repo with a design hand-off. Conflicts keeps its own steps: jstack's Babysit playbook reports a conflict rather than resolving it.
 
