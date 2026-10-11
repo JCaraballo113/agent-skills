@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { execFileSync, spawnSync } from "node:child_process";
-import { mkdtempSync, readFileSync } from "node:fs";
+import { mkdtempSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { test } from "node:test";
@@ -41,10 +41,20 @@ test("a hold shorter than its reading time is an error", () => {
   assert.match(check(film("SCENE A: FRAMES 0 THROUGH 299", hold)).errors.join(), /readable for 21 frames.*at least 82/);
 });
 
-test("an event past the end is an error, and a cue off every event is a warning", () => {
-  const { errors, warnings } = check(film("SCENE A: FRAMES 0 THROUGH 299", "EVENT 300 late Too late\nCUE 50 click"));
+test("an event past the end and a cue off every event are errors", () => {
+  const { errors } = check(film("SCENE A: FRAMES 0 THROUGH 299", "EVENT 300 late Too late\nCUE 50 click"));
   assert.match(errors.join(), /event late frame 300 is outside 0 through 299/);
-  assert.match(warnings.join(), /cue click at 50 sits on no EVENT frame/);
+  assert.match(errors.join(), /cue click at 50 sits on no EVENT frame/);
+});
+
+test("prose that starts with a keyword word is left alone", () => {
+  assert.deepEqual(check(film("SCENE A: FRAMES 0 THROUGH 299", "Hold the result still.\nCue the music softly.")).errors, []);
+});
+
+test("--stage limits the commands to one stage and the boundary into it", () => {
+  const lines = commands(parseBrief(template), "product");
+  assert.ok(lines.includes("# stage product") && lines.includes("# boundary into PRODUCT"));
+  assert.ok(!lines.some((l) => /opening|CLOSING/.test(l)));
 });
 
 test("a keyword line in the wrong format is reported", () => {
@@ -80,4 +90,14 @@ test("audio-hit.mjs finds the hit after a soft lead-in", { skip: !hasFfmpeg && "
   assert.equal(out.audibleFromSeconds, 0.3);
   assert.equal(out.hitSeconds, 0.4);
   assert.equal(out.startFrame, 183);
+});
+
+test("--export checks the render against the brief and writes one still per STAGE frame", { skip: !hasFfmpeg && "ffmpeg not installed" }, () => {
+  const dir = mkdtempSync(join(tmpdir(), "motion-brief-"));
+  const video = join(dir, "film.mp4");
+  const brief = join(dir, "BRIEF.md");
+  writeFileSync(brief, "Composition: Film, 64 by 64, 30 fps, 60 frames.\nSCENE A: FRAMES 0 THROUGH 59\nSTAGE all 0 30 59\n");
+  execFileSync("ffmpeg", ["-v", "error", "-f", "lavfi", "-i", "testsrc=s=64x64:r=30:d=2", "-pix_fmt", "yuv420p", video]);
+  execFileSync("node", [join(here, "brief-check.mjs"), brief, "--export", video], { stdio: "ignore" });
+  assert.deepEqual(readdirSync(dir).filter((f) => f.endsWith(".png")).sort(), ["film-f0.png", "film-f30.png", "film-f59.png"]);
 });

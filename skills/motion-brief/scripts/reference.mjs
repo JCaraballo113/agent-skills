@@ -33,7 +33,7 @@ if (!src.video && !src.width) throw new Error(`${file} has no video stream`);
 if (src.variableFrameRate) {
   console.error(
     `${file} has a variable frame rate (r_frame_rate ${src.rFrameRate}, avg_frame_rate ${src.avgFrameRate}), so frame numbers drift from timestamps.\n` +
-      `Make a constant-rate copy and measure that instead:\n  ffmpeg -i ${file} -fps_mode cfr -r ${Math.round(src.fps)} reference-cfr.mp4`,
+      `Make a constant-rate copy and measure that instead (on ffmpeg older than 5.1, use -vsync cfr in place of -fps_mode cfr):\n  ffmpeg -i "${file}" -fps_mode cfr -r ${src.avgFrameRate} reference-cfr.mp4`,
   );
   process.exit(3);
 }
@@ -43,7 +43,7 @@ const ah = Math.max(2, Math.round((src.height * aw) / src.width / 2) * 2);
 const sx = src.width / aw;
 const sy = src.height / ah;
 const toSource = (b) => b && [Math.floor(b[0] * sx), Math.floor(b[1] * sy), Math.ceil((b[2] + 1) * sx), Math.ceil((b[3] + 1) * sy)];
-const decode = ["-i", file, "-vf", `scale=${aw}:${ah}:flags=area,format=gray`, "-f", "rawvideo", "-"];
+const decode = ["-i", file, "-fps_mode", "passthrough", "-vf", `scale=${aw}:${ah}:flags=area,format=gray`, "-f", "rawvideo", "-"];
 
 function diff(a, b) {
   let changed = 0;
@@ -124,7 +124,8 @@ function extract(dir, selectExpr, scaleExpr, names, ext) {
   const filter = `select='${selectExpr}'${scaleExpr ? `,scale=${scaleExpr}` : ""}`;
   ffmpeg(["-i", file, "-vf", filter, "-fps_mode", "passthrough", "-q:v", "3", join(dir, `tmp-%05d.${ext}`)]);
   const made = readdirSync(dir).filter((f) => f.startsWith("tmp-")).sort();
-  made.forEach((f, k) => renameSync(join(dir, f), join(dir, names[k] ?? f)));
+  if (made.length !== names.length) throw new Error(`${dir}: expected ${names.length} images, ffmpeg wrote ${made.length}`);
+  made.forEach((f, k) => renameSync(join(dir, f), join(dir, names[k])));
   return made.length;
 }
 

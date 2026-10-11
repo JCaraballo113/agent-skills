@@ -1,6 +1,6 @@
 # Motion craft
 
-Read this before you write or review motion code for a stage. Every section is a rule the brief's numbers depend on.
+Read this before you write or review motion code for a stage. It covers direction; Remotion's own skill covers the APIs.
 
 ## Every move has a job
 
@@ -36,18 +36,12 @@ After any copy change, render the landing frame again before you review the entr
 - `spring()` overshoots at its defaults (mass 1, damping 10, stiffness 100). For a controlled landing, set `overshootClamping: true` or raise the damping. Pass `durationInFrames` to fit the spring to the brief's frame range.
 - Tune a spring one parameter at a time. Keep its destination fixed while you replay the entrance.
 - For a slow push, interpolate an absolute range, such as scale 1.00 to 1.03 across the scene's frames. Multiplying by a constant factor each frame compounds.
-- Keep each element's offset, destination, start, duration and easing together in one exported constant. A revision should then touch only that one object.
-
-## Every frame renders the same way
-
-- Drive every animated value from `useCurrentFrame()`. CSS transitions and animations flicker in renders, because Remotion renders frames out of order across several browser tabs.
-- For variation, use `random(seed)` from `remotion`. Each render thread gets its own `Math.random()` values, and `random(null)` is not reproducible.
 
 ## Motion blur stays inside the move
 
 Use blur only during a fast entrance, and make sure it is gone by the time the move settles, so the reading hold stays clear.
 
-`HtmlInCanvasMotionBlur` is Remotion's recommended tool. `CameraMotionBlur` (shutterAngle 180 and samples 10 by default) averages time-shifted copies, which shifts colours and can smear text or leave trails. Its children must be absolutely positioned.
+Remotion's blur tools blend time-shifted copies of the frame, which can shift colours, smear text and leave trails. Ask Remotion's skill for the current tool and its settings.
 
 To check blur, render the entrance and the cut next to it. Look for a clean scene boundary and for text that is readable once the card settles.
 
@@ -62,6 +56,5 @@ To check blur, render the entrance and the cut next to it. Look for a clean scen
 
 ## Sound
 
-- Use `Audio` from `@remotion/media`. Remotion's docs now treat `Html5Audio` as the legacy path.
 - A soft lead-in or a stretch of silence at the start of a clip moves the audible hit away from frame 0. `scripts/audio-hit.mjs` measures that offset.
 - Listen to the loudest event, the quietest cue that matters, and the ending, on both headphones and a phone speaker.

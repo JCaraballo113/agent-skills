@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 // Checks BRIEF.md's frame plan, prints its timeline in seconds, and optionally the render commands or an export's metadata check.
-// Usage: node brief-check.mjs BRIEF.md [--commands] [--export out/film.mp4] [--cps 15]
-import { readFileSync } from "node:fs";
+// Usage: node brief-check.mjs BRIEF.md [--commands [--stage <name>]] [--export out/film.mp4] [--cps 15]
 import { pathToFileURL } from "node:url";
-import { args, probe, seconds } from "./media.mjs";
+import { readdirSync, readFileSync, renameSync } from "node:fs";
+import { basename, dirname, extname, join } from "node:path";
+import { args, ffmpeg, probe, seconds } from "./media.mjs";
 
 const MIN_HOLD_SECONDS = 1;
 const BOUNDARY_PREVIEW_SECONDS = 1;
@@ -16,19 +17,19 @@ export function parseBrief(text) {
     let m;
     if ((m = line.match(/^Composition:\s*([\w-]+),\s*(\d+)\s*by\s*(\d+),\s*([\d.]+)\s*fps,\s*(\d+)\s*frames/i))) {
       brief.composition = { id: m[1], width: +m[2], height: +m[3], fps: +m[4], frames: +m[5] };
-    } else if ((m = line.match(/^SCENE\s+([\w-]+):\s*FRAMES\s+(\d+)\s+THROUGH\s+(\d+)/i))) {
+    } else if ((m = line.match(/^SCENE\s+([\w-]+):\s*FRAMES\s+(\d+)\s+THROUGH\s+(\d+)/))) {
       brief.scenes.push({ name: m[1], from: +m[2], to: +m[3], at });
-    } else if ((m = line.match(/^TRANSITION\s+(\d+)\s+(\d+)/i))) {
+    } else if ((m = line.match(/^TRANSITION\s+(\d+)\s+(\d+)/))) {
       brief.transitions.push({ from: +m[1], to: +m[2], at });
-    } else if ((m = line.match(/^EVENT\s+(\d+)\s+([\w-]+)\s*(.*)$/i))) {
+    } else if ((m = line.match(/^EVENT\s+(\d+)\s+([\w-]+)\s*(.*)$/))) {
       brief.events.push({ frame: +m[1], name: m[2], what: m[3], at });
-    } else if ((m = line.match(/^HOLD\s+(\d+)\s+(\d+)\s+"(.+)"/i))) {
+    } else if ((m = line.match(/^HOLD\s+(\d+)\s+(\d+)\s+"(.+)"/))) {
       brief.holds.push({ from: +m[1], to: +m[2], text: m[3], at });
-    } else if ((m = line.match(/^CUE\s+(\d+)\s+([\w-]+)\s*(.*)$/i))) {
+    } else if ((m = line.match(/^CUE\s+(\d+)\s+([\w-]+)\s*(.*)$/))) {
       brief.cues.push({ frame: +m[1], name: m[2], what: m[3], at });
-    } else if ((m = line.match(/^STAGE\s+([\w-]+)\s+([\d\s]+)$/i))) {
+    } else if ((m = line.match(/^STAGE\s+([\w-]+)\s+([\d\s]+)$/))) {
       brief.stages.push({ name: m[1], frames: m[2].trim().split(/\s+/).map(Number), at });
-    } else if (/^(SCENE|EVENT|HOLD|CUE|STAGE|TRANSITION|Composition)\b/i.test(line)) {
+    } else if (/^(SCENE|EVENT|HOLD|CUE|STAGE|TRANSITION)\b|^Composition:/.test(line)) {
       brief.problems.push(`${at}: "${line}" starts with a brief keyword but doesn't match its format (see BRIEF-TEMPLATE.md)`);
     }
   }
@@ -85,7 +86,7 @@ export function checkBrief(brief, { cps = 15 } = {}) {
   for (const q of brief.cues) {
     inRange(q.frame, `cue ${q.name}`, q.at);
     if (!brief.events.some((e) => e.frame === q.frame))
-      warnings.push(`${q.at}: cue ${q.name} at ${q.frame} sits on no EVENT frame; sounds land on the visible event they belong to`);
+      errors.push(`${q.at}: cue ${q.name} at ${q.frame} sits on no EVENT frame; a sound's hit lands on the visible event it belongs to`);
   }
 
   if (!brief.stages.length) warnings.push("no STAGE lines, so there are no review stills to render between passes");
@@ -93,10 +94,10 @@ export function checkBrief(brief, { cps = 15 } = {}) {
   return { errors, warnings };
 }
 
-export function commands(brief) {
+export function commands(brief, only) {
   const c = brief.composition;
   const lines = [];
-  for (const s of brief.stages) {
+  for (const s of brief.stages.filter((st) => !only || st.name === only)) {
     lines.push(`# stage ${s.name}`);
     for (const f of s.frames) lines.push(`npx remotion still ${c.id} out/${s.name}-f${f}.png --frame=${f}`);
     const scene = brief.scenes.filter((sc) => s.frames.some((f) => f >= sc.from && f <= sc.to));
@@ -109,10 +110,26 @@ export function commands(brief) {
   const pad = Math.round(BOUNDARY_PREVIEW_SECONDS * c.fps);
   const sorted = [...brief.scenes].sort((a, b) => a.from - b.from);
   for (const s of sorted.slice(1)) {
+    if (only && !brief.stages.find((st) => st.name === only)?.frames.some((f) => f >= s.from && f <= s.to)) continue;
     lines.push(`# boundary into ${s.name}`);
     lines.push(`npx remotion render ${c.id} out/into-${s.name}.mp4 --frames=${Math.max(0, s.from - pad)}-${Math.min(c.frames - 1, s.from + pad - 1)} --codec=h264`);
   }
   return lines;
+}
+
+function exportStills(brief, file) {
+  const frames = [...new Set(brief.stages.flatMap((s) => s.frames))].sort((a, b) => a - b);
+  const dir = dirname(file);
+  const base = basename(file, extname(file));
+  const select = frames.map((n) => `eq(n\\,${n})`).join("+");
+  ffmpeg(["-y", "-i", file, "-vf", `select='${select}'`, "-fps_mode", "passthrough", join(dir, `${base}-tmp-%05d.png`)]);
+  const made = readdirSync(dir).filter((f) => f.startsWith(`${base}-tmp-`)).sort();
+  if (made.length !== frames.length) throw new Error(`${file}: expected ${frames.length} stills, ffmpeg wrote ${made.length}`);
+  return made.map((f, k) => {
+    const name = join(dir, `${base}-f${frames[k]}.png`);
+    renameSync(join(dir, f), name);
+    return name;
+  });
 }
 
 export function checkExport(c, info) {
@@ -124,10 +141,10 @@ export function checkExport(c, info) {
 }
 
 function main() {
-  const opts = args(process.argv.slice(2), { commands: "boolean", export: "string", cps: "string" });
+  const opts = args(process.argv.slice(2), { commands: "boolean", stage: "string", export: "string", cps: "string" });
   const [file] = opts._;
   if (!file) {
-    console.error("usage: node brief-check.mjs BRIEF.md [--commands] [--export out/film.mp4] [--cps 15]");
+    console.error("usage: node brief-check.mjs BRIEF.md [--commands [--stage <name>]] [--export out/film.mp4] [--cps 15]");
     process.exit(1);
   }
   const brief = parseBrief(readFileSync(file, "utf8"));
@@ -144,12 +161,15 @@ function main() {
     for (const [f, what] of rows) console.log(`${String(f).padStart(5)}  ${seconds(f, c.fps).padStart(6)}s  ${what}`);
     console.log("");
   }
-  if (c && opts.export) errors.push(...checkExport(c, probe(opts.export)).map((e) => `${opts.export}: ${e}`));
+  if (c && opts.export) {
+    errors.push(...checkExport(c, probe(opts.export)).map((e) => `${opts.export}: ${e}`));
+    if (!errors.length) console.log(`stills from the export, one per STAGE frame:\n${exportStills(brief, opts.export).join("\n")}\n`);
+  }
   for (const w of warnings) console.log(`warning: ${w}`);
   for (const e of errors) console.log(`error: ${e}`);
-  if (c && opts.commands && !errors.length) console.log(`\n${commands(brief).join("\n")}`);
+  if (c && opts.commands && !errors.length) console.log(`\n${commands(brief, opts.stage).join("\n")}`);
   if (errors.length) process.exit(1);
   console.log(errors.length || warnings.length ? "" : "brief is consistent");
 }
 
-if (import.meta.url === pathToFileURL(process.argv[1]).href) main();
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) main();

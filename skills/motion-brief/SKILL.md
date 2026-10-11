@@ -11,7 +11,7 @@ This skill owns direction: what happens, on which frame, and for how long. For R
 
 ## Requirements
 
-- Node 20 or later, plus `ffmpeg` and `ffprobe`. Check them with `node --version` and `ffprobe -version`.
+- Node 20 or later, plus `ffmpeg` and `ffprobe`. A script exits with code 2 when one is missing.
 - A Remotion project: `remotion` appears in its `package.json`.
 - Remotion's Agent Skills: `remotion-best-practices` is in the available-skills list.
 
@@ -23,11 +23,7 @@ In the steps, `scripts/` means this skill's own `scripts/` folder. Run each scri
 
 ### 1. Measure the reference (when the user has one)
 
-Run `node scripts/reference.mjs <reference video> --out reference/`. It writes `reference/REFERENCE.md` with the **Measured** section filled in, and saves two sets of images whose names carry the source frame:
-- `reference/overview/`: two per second, 960 px wide.
-- `reference/events/`: each event's start and settle, two frames either side, plus its peak, at full resolution.
-
-If the video has a variable frame rate, the script refuses it and prints the command that makes a constant-rate copy. Measure that copy instead.
+Run `node scripts/reference.mjs <reference video> --out reference/`. It writes `reference/motion.json` and `reference/REFERENCE.md`, with the **Measured** section filled in and the image sets listed at the bottom: overview images and event images, each named by its source frame. If the video has a variable frame rate, the script refuses it and prints the command that makes a constant-rate copy. Measure that copy instead.
 
 Then look through the overview images in order, then each event's images, and fill in **Estimated**:
 - what moves first, and where the eye lands
@@ -37,7 +33,7 @@ Then look through the overview images in order, then each event's images, and fi
 
 Every estimate cites the frames it came from. When a value is uncertain, also name the frames that would settle it.
 
-Positions are the exception. Take them from the Measured boxes, or read them off the `events/` images only. Claude reports coordinates in the image it saw, so a position read off a 960 px overview image is off by the overview's scale. When REFERENCE.md lists a scale for the event images, divide by it.
+Positions are the exception. Take them from the Measured boxes, or read them off the `events/` images only. Claude reports coordinates in the image it saw, so a position read off an overview image is off by the overview's scale.
 
 Finish with **Proposed**: one original shot for the user's product, using their assets. Give its layout, focal point, entrance, product response and reading hold. List the missing assets and the questions that need their approval.
 
@@ -47,15 +43,15 @@ Done when every measured event has estimates with frame citations, and Proposed 
 
 Copy the body of [BRIEF-TEMPLATE.md](./BRIEF-TEMPLATE.md) into the project's `BRIEF.md`. Replace each bracket with the user's real copy and assets. Retime the events from the approved shot plan: write each time in seconds first, then multiply by fps to get the frame (0.6 s at 30 fps is frame 18). Keep the opening line short and let the product action carry the explanation. Anything that takes several sentences to explain gets its own scene.
 
-Run `node scripts/brief-check.mjs BRIEF.md`. It checks that the scenes cover every frame, that events and stills fall inside the film, that each hold is long enough to read its text (15 characters per second, and at least one second), and that each sound cue sits on an event.
+Run `node scripts/brief-check.mjs BRIEF.md`. It checks that the scenes cover every frame, that events and stills fall inside the film, that each hold is long enough to read its text (15 characters per second, and at least one second), and that each sound cue sits on an event. The `Composition:` id must match the Remotion composition's `id`, because the render commands use it.
 
 Done when brief-check reports no errors, and every bracket is either filled or asked of the user.
 
 ### 3. Build one stage
 
-Read [CRAFT.md](./CRAFT.md) before writing motion code. Inspect `public/` for each asset's dimensions, and confirm the font loads. Then implement the first `STAGE` in BRIEF.md that hasn't been approved yet.
+Read [CRAFT.md](./CRAFT.md) before writing motion code. Implement the first `STAGE` in BRIEF.md that hasn't been approved yet, following the brief's asset, layout and implementation lines.
 
-Run `node scripts/brief-check.mjs BRIEF.md --commands`. Render that stage's stills, its moving preview, and the boundary preview into it, then view every still. Check each one against the brief:
+Run `node scripts/brief-check.mjs BRIEF.md --commands --stage <name>`. It prints the stage's stills, its moving preview and, from the second stage on, the boundary preview into it. Run all of them, then view every still. Check each one against the brief:
 - the longest copy wraps within its line limit in the real rendered font, weight and spacing
 - content stays inside the margins
 - elements settle on the brief's coordinates
@@ -94,8 +90,7 @@ Done when every cue's clip starts where audio-hit put it.
 ### 6. Export
 
 1. Render the whole composition with `npx remotion render <id> out/<name>.mp4 --codec=h264`.
-2. Run `node scripts/brief-check.mjs BRIEF.md --export out/<name>.mp4`. It checks the size, frame rate and frame count against the brief.
-3. Pull the opening, result and closing frames out of the exported file and view them.
-4. Keep the export next to BRIEF.md and its cue list.
+2. Run `node scripts/brief-check.mjs BRIEF.md --export out/<name>.mp4`. It checks the size, frame rate and frame count against the brief, then saves one still from the export for each `STAGE` frame, next to the export.
+3. View those stills. Keep the export next to BRIEF.md.
 
-Done when the export check passes and the user has watched the film at normal speed.
+Done when the export check passes, its stills match the approved stages, and the user has watched the film at normal speed.

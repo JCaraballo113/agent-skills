@@ -30,6 +30,7 @@ const peakDb = Math.max(...levels);
 const peakIndex = levels.indexOf(peakDb);
 const onsetFloor = Math.max(peakDb - ONSET_BELOW_PEAK_DB, SILENCE_DBFS);
 const onsetIndex = levels.findIndex((db) => db >= onsetFloor);
+if (onsetIndex < 0) throw new Error(`${file} has nothing audible above ${SILENCE_DBFS} dBFS`);
 let hitIndex = onsetIndex;
 let biggestRise = -Infinity;
 for (let i = Math.max(1, onsetIndex); i <= peakIndex; i++) {

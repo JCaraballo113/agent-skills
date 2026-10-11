@@ -6,7 +6,7 @@ Lines that start with `Composition:`, `SCENE`, `TRANSITION`, `EVENT`, `HOLD`, `C
 
 | Line | Format | Meaning |
 |---|---|---|
-| `Composition:` | `Composition: <id>, <w> by <h>, <fps> fps, <frames> frames.` | The Remotion composition. Its last frame is `frames - 1`. |
+| `Composition:` | `Composition: <id>, <w> by <h>, <fps> fps, <frames> frames.` | `<id>` is the Remotion composition's `id`; the render commands use it. Its last frame is `frames - 1`. |
 | `SCENE` | `SCENE <name>: FRAMES <a> THROUGH <b>` | Scenes tile the film from 0 to the last frame with no gaps. |
 | `TRANSITION` | `TRANSITION <a> <b>` | Declares frames where two scenes overlap (a TransitionSeries transition). |
 | `EVENT` | `EVENT <frame> <name> <what the viewer sees>` | One moment someone could point at. Names are unique. |
