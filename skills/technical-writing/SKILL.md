@@ -1,6 +1,6 @@
 ---
 name: technical-writing
-description: "Layered technical-writing standard: Diátaxis structure, Google developer style sentences, STE instruction rules, Global English syntax. Use for /agent-skills:technical-writing, when writing or reviewing docs, RFCs, readmes, PR descriptions, or commit messages, or when jstack-mode's playbook step calls for it."
+description: "Layered technical-writing standard: Diátaxis structure, Google developer style sentences, STE instruction rules, Global English syntax. Use for /agent-skills:technical-writing, when asked to write or review docs, RFCs or readmes against a writing standard, or when jstack-mode's playbook step calls for it."
 ---
 
 # Technical writing

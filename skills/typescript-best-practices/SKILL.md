@@ -1,12 +1,12 @@
 ---
 name: typescript-best-practices
-description: TypeScript rules (discriminated unions, branded types, no `as` casts, exhaustiveness, boundary validation, real tests) with code examples. Use when reading or editing any .ts or .tsx file, when settling types before TypeScript code crosses a function boundary, or when jstack-mode's playbook step calls for it.
+description: TypeScript rules (discriminated unions, branded types, no `as` casts, exhaustiveness, boundary validation, real tests) with code examples. Use when writing or changing TypeScript types and signatures, when settling types before TypeScript code crosses a function boundary, or when jstack-mode's playbook step calls for it.
 paths: ["**/*.ts", "**/*.tsx"]
 ---
 
 # TypeScript best practices
 
-Apply the **type-system-discipline** principle (`principles/type-system-discipline.md` in the jstack-mode skill) first.
+Apply the **type-system-discipline** principle (`${CLAUDE_PLUGIN_ROOT}/skills/jstack-mode/principles/type-system-discipline.md`) first.
 
 | Rule | Summary |
 |------|---------|
@@ -21,7 +21,7 @@ Apply the **type-system-discipline** principle (`principles/type-system-discipli
 | Type guards | Must verify the claim. A lying guard is worse than `as` because the bug hides behind a name that says it's safe. Name them `isX` or `hasX`. |
 | Exhaustiveness | Inline `const _exhaustive: never = x;` in default arms so the compiler errors when a new variant is added. |
 | `satisfies` over `as` | Validates the value without widening literal types. |
-| Boundary validation | Parse where data crosses in, into a named domain type. `Record<string, unknown>` (however spelled) stops at that parse. Trust types inside. See the **boundary-discipline** principle (`principles/boundary-discipline.md` in the jstack-mode skill). |
+| Boundary validation | Parse where data crosses in, into a named domain type. `Record<string, unknown>` (however spelled) stops at that parse. Trust types inside. See the **boundary-discipline** principle (`${CLAUDE_PLUGIN_ROOT}/skills/jstack-mode/principles/boundary-discipline.md`). |
 | Schema-derived types | Reach for `Pick`/`Omit`/`Parameters`/`ReturnType`/`Awaited`/`typeof` before declaring a new interface. |
 | Object args | Pass objects, not positional, so argument order is self-documenting. Skip on hot paths (per-frame render, tokenizers, parsers). |
 | Real tests | Don't mock what you can run. Prefer the framework's real test primitives with leak/disposable checks, and verify UI in a running build. Mock only what you can't run locally. |

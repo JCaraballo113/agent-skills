@@ -1,6 +1,6 @@
 ---
 name: why
-description: "Investigates why code is shaped the way it is. Discovers available MCPs and queries each evidence category (source control, issue tracker, long-form docs, real-time chat, infrastructure observability, error tracking, product analytics warehouse) in parallel, then returns a cited read on decisions and tradeoffs. Use for /agent-skills:why, 'why does X work this way', 'why we picked Y', design rationale, regressions, postmortems, data-backed thresholds, or when jstack-mode's playbook step calls for it. Use how for runtime behavior."
+description: "Investigates why code is shaped the way it is. Discovers available MCPs and queries each evidence category (source control, issue tracker, long-form docs, real-time chat, infrastructure observability, error tracking, product analytics warehouse) in parallel, then returns a cited read on decisions and tradeoffs. Use for /agent-skills:why, 'why we picked Y', design rationale, regressions, postmortems, data-backed thresholds, or when jstack-mode's playbook step calls for it. Use how for runtime behavior."
 ---
 
 # Why

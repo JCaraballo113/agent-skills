@@ -25,7 +25,7 @@ Skip Phase A only when the work is genuinely greenfield with no surrounding syst
 
 ## Phase B: Sketch
 
-Run the **arena** skill with the design-sketch task and the Phase A grounding artifacts. Pass `references/runner-prompt.md` as each runner's prompt.
+Run the **arena** skill with the design-sketch task and the Phase A grounding artifacts. Pass `references/runner-prompt.md` as each runner's prompt, with every `principles/` path in it written out as `${CLAUDE_PLUGIN_ROOT}/skills/jstack-mode/principles/` so the runner can open it.
 
 Take the runners from the `architect runners` line in `~/.claude/rules/jstack-models.md`, in place of the `arena runners` line. If the rule or that line is missing, use two runners on `opus`. `inherit` and rejected entries follow the runner rules in the **arena** skill's Phase A.
 

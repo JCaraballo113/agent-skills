@@ -5,7 +5,7 @@ description: jstack's working style, which routes a task to a playbook (bug fix,
 
 # jstack mode
 
-This skill's folder is `${CLAUDE_SKILL_DIR}`. Every `playbooks/`, `principles/`, `references/` and `scripts/` path below and in the playbooks resolves from it. This session's transcript is `~/.claude/projects/*/${CLAUDE_SESSION_ID}.jsonl`. "The **x** skill" here and in the playbooks means this plugin's skill, invoked as `agent-skills:x`.
+This skill's folder is `${CLAUDE_SKILL_DIR}`, and the plugin root (`<plugin root>` in the playbooks) is `${CLAUDE_PLUGIN_ROOT}`. Every `playbooks/`, `principles/`, `references/` and `scripts/` path below and in the playbooks resolves from it. This session's transcript is `${CLAUDE_SESSION_ID}.jsonl` in this project's transcript folder, `~/.claude/projects/<project>/`, where `<project>` is the working directory with every non-alphanumeric character replaced by `-`. "The **x** skill" here and in the playbooks means this plugin's skill, invoked as `agent-skills:x`.
 
 ## Non-negotiables
 
@@ -89,7 +89,7 @@ Read the principle's file in full for any principle you apply. Each entry names 
 
 ## Subagents
 
-**Use `subagent_type: "agent-skills:jstack-agent"` for any subagent you spawn inside a playbook step** (code-writing delegates, ad-hoc helpers). It invokes this skill before any work. Routed workflow skills (`how`, `why`, `interrogate`, `reflect`, `swarm`) set their own `subagent_type` for diverse-model review. Respect what the skill prescribes, don't override to `jstack-agent`.
+**Use `subagent_type: "agent-skills:jstack-agent"` for any subagent you spawn inside a playbook step** (code-writing delegates, ad-hoc helpers). It invokes this skill before any work. Routed workflow skills (`how`, `why`, `interrogate`, `reflect`, `swarm`, `recall`, `show-me-your-work`, `no-comments`, `maintain-verification-skill`) set their own `subagent_type`, for diverse-model review or a read-only worker. Respect what the skill prescribes, don't override to `jstack-agent`.
 
 **Defaults for every Agent call.** `run_in_background: true`, file pointers not inlined context, explicit `model` per role. Roles read `~/.claude/rules/jstack-models.md`, which the **setup-jstack** skill writes. Defaults are `opus` for code, prose and judgment, and `fable` only as the second-opinion reviewer on review panels. Code delegates tier by difficulty. The hardest changes (cross-cutting design, gnarly concurrency, subtle algorithms) read the `hardest tasks` line, default `opus`, whether the task needs judgment on vague intent or is a precisely specified sequence of steps to execute to the letter. Trivial mechanical edits go to `sonnet`. Per-role lines in the rule override these defaults and the model choices in the routed skills (`how`, `why`, `arena`, `swarm`, `architect`, `interrogate`, `reflect`). A role with no line keeps its default, and a role line of `inherit` runs that role on the parent's model (omit `model`). Each code playbook's configured model comes from its line (`feature, refactoring`, `bug-fix`, `perf-issue`, or `hillclimb`), and the hardest changes read `hardest tasks`. Prose and judgment read `judgment and prose`.
 

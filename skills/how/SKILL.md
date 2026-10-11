@@ -1,6 +1,6 @@
 ---
 name: how
-description: "Explains how a part of the codebase works, its architecture, runtime flow and where things live, through read-only explorer and explainer subagents. Use for /agent-skills:how, \"how does X work\", a code walkthrough before changing something, placement, ownership and layering questions (\"where should this live\", \"which package owns this\", \"is this the right layer\"), onboarding onto a subsystem, or when jstack-mode's playbook step calls for it. Use why for motivation."
+description: "Explains how a part of the codebase works, its architecture, runtime flow and where things live, through read-only explorer and explainer subagents. Use for /agent-skills:how, a request for a walkthrough of a subsystem before changing it, placement, ownership and layering questions (\"where should this live\", \"which package owns this\", \"is this the right layer\"), onboarding onto a subsystem, or when jstack-mode's playbook step calls for it. Use why for motivation."
 ---
 
 # How

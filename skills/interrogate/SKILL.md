@@ -34,7 +34,7 @@ Each reviewer gets `subagent_type: "agent-skills:jstack-reader"` and `model` set
 
 Fable and Opus are both Claude models. Reviewer B is the Fable second opinion. The defaults differ by tier, not by model family, until a non-Claude reviewer is added to the line. Weigh their agreement with that in mind.
 
-If the Agent tool rejects a configured entry, run that reviewer on its table default and say so. With no table default for its label, use Reviewer B's default. Do not block the review on a rejected entry. Never treat an `inherit` entry as rejected or apply the fallback to it.
+If the Agent tool rejects a configured entry, run that reviewer on its table default and say so. With no table default for its label, use Reviewer A's default. Do not block the review on a rejected entry. Never treat an `inherit` entry as rejected or apply the fallback to it.
 
 Read `references/reviewer-prompt.md` and fill in the same template for every reviewer with the stated intent, the diff or file contents, the rubric from `references/rubric.md`, and the code-quality lens from `references/code-quality-review.md`.
 

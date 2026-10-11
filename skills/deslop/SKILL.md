@@ -1,6 +1,6 @@
 ---
 name: deslop
-description: Removes AI-generated code slop from the branch diff against main (needless comments, abnormal defensive checks, `any` casts, deep nesting) without changing behavior. Use before commit, for /agent-skills:deslop or "deslop this branch", or when jstack-mode's playbook step calls for it.
+description: Removes AI-generated code slop from the branch diff against main (needless comments, abnormal defensive checks, `any` casts, deep nesting) without changing behavior. Use for /agent-skills:deslop or "deslop this branch", or when jstack-mode's playbook step or a routine calls for it before commit.
 ---
 
 # Remove AI code slop

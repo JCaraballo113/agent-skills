@@ -1,6 +1,6 @@
 ---
 name: unslop
-description: Cuts AI tells from any writing (AI vocabulary, filler, hedging, em dashes, mid-sentence colons, mannered prose) by a numbered rule catalog that other skills cite. Use on every prose surface before it ships, replies, docs, PR descriptions, commit messages and log rows included, when the user asks to unslop or de-AI some text, or when jstack-mode's playbook step calls for it.
+description: Cuts AI tells from any writing (AI vocabulary, filler, hedging, em dashes, mid-sentence colons, mannered prose) by a numbered rule catalog that other skills cite. Use for /agent-skills:unslop, when the user asks to unslop or de-AI some text, or when jstack-mode or another skill calls for it before prose ships.
 ---
 
 # Unslop

@@ -23,13 +23,14 @@ jstack is [pstack](https://github.com/cursor/plugins/tree/main/pstack) 0.15.17 (
 | Cursor | Claude Code |
 |---|---|
 | `Task` tool | Agent tool |
-| `subagent_type: generalPurpose` with `readonly: true` | `subagent_type: "agent-skills:jstack-reader"`. It has no Edit or Write but keeps MCP, so Cursor's warning that read-only mode strips MCP no longer applies. |
+| `subagent_type: generalPurpose` with `readonly: true` | `subagent_type: "agent-skills:jstack-reader"`. It has no Edit or Write but keeps MCP, so Cursor's warning that read-only mode strips MCP no longer applies. It keeps Bash, and Claude Code ignores `permissionMode` and `hooks` on plugin agents, so its read-only rule is an instruction in its brief, not an enforced limit. |
 | `generalPurpose` in agent mode (`readonly: false`) | `subagent_type: "general-purpose"` |
 | `environment: "cloud"` | `isolation: "remote"` when the Agent tool offers it, else `isolation: "worktree"` |
 | `environment: "local"` | No `isolation`, or `isolation: "worktree"` when the worker edits files |
 | A model slug such as `claude-opus-5-5-xhigh` | `model: "fable"`, `"opus"`, `"sonnet"` or `"haiku"`. Omit `model` to inherit the parent's. |
 | `AskQuestion` | `AskUserQuestion` |
-| Cursor's `/loop` | The bundled `/loop` skill. Self-paced runs wake through `ScheduleWakeup`, and fixed intervals through `CronCreate`. |
+| Cursor's `/loop` | The bundled `/loop` skill. Omit the interval to self-pace. |
+| A Custom Mode's skill loading | `jstack-agent` preloads jstack-mode through its `skills:` frontmatter, which needs the plugin-qualified name `agent-skills:jstack-mode`. |
 | A Custom Mode (`mode: true`, `reminder:`) | `/agent-skills:jstack-mode` per task, or `claude --agent agent-skills:jstack-agent` for a whole session |
 | Cursor's built-in `create-skill` | The **writing-for-agents** skill from mattpocock-skills when installed. Otherwise follow the Authoring playbook directly. |
 | A Cursor cloud agent or cloud subagent | A Claude Code cloud session, or an Agent call with `isolation: "remote"` |

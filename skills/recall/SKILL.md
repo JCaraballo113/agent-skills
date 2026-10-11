@@ -1,6 +1,6 @@
 ---
 name: recall
-description: "Rebuilds the user's recent working context from their Claude Code chat history on this machine, live git and gh state, and the shared record (user reports, prior fixes, incidents), and returns a tight current-state brief. Use for 'recall my work on X', 'catch me up', 'what have I been working on', 'where did I leave off', before starting or resuming work on a topic in a fresh chat, or when jstack-mode's playbook step calls for it."
+description: "Rebuilds the user's recent working context from their Claude Code chat history on this machine, live git and gh state, and the shared record (user reports, prior fixes, incidents), and returns a tight current-state brief. Use for 'recall my work on X', 'catch me up', 'what have I been working on', 'where did I leave off', or when jstack-mode's playbook step calls for it."
 ---
 
 # Recall
