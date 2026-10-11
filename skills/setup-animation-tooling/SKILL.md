@@ -13,7 +13,7 @@ encodes with ffmpeg. It makes **assets** — PNG, MP4 with score, GIF,
 WebM/APNG with alpha, one offline HTML player — for any project: a web
 hero, a game's sprites and title card, a README loop. In-app UI motion
 stays with the stack module's runtime library (GSAP on web, reanimated on
-mobile).
+mobile), and a product film cut from real screens is `motion-brief`'s job.
 
 Invoking this skill is the user's go-ahead to install `anidoodle` itself.
 System packages (Node, ffmpeg) are heavier: show the command for the
