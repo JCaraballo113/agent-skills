@@ -62,6 +62,7 @@ pstack hid 51 of its 52 skills from the model. In Claude Code, `disable-model-in
 | hillclimb | opus |
 | judgment and prose | opus |
 | hardest tasks | opus |
+| trivial edits | sonnet |
 | how explorer | sonnet |
 | how explainer | opus |
 | why investigators | sonnet |

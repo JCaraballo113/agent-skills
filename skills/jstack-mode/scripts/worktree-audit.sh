@@ -24,11 +24,16 @@ gh pr list --author "@me" --state all --limit 1000 \
 
 # Claude Code keeps each session's transcript in ~/.claude/projects/<project>/,
 # where <project> is the session's working directory with every
-# non-alphanumeric character replaced by "-". A chat started in the main
-# checkout and a chat started inside a worktree land in different folders, so
-# both are scanned for each worktree.
+# non-alphanumeric character replaced by "-". A chat, or a subagent it spawned,
+# can operate in any worktree from a session started in the main checkout or in
+# another worktree, so every worktree's folder is scanned for each worktree.
 projects="$HOME/.claude/projects"
 project_dir() { printf '%s/%s' "$projects" "$(printf '%s' "$1" | sed 's/[^A-Za-z0-9]/-/g')"; }
+dirs=()
+while read -r path; do
+	d=$(project_dir "$path")
+	[ -d "$d" ] && dirs+=("$d")
+done < <(git worktree list --porcelain | awk '/^worktree /{print $2}')
 now=$(date +%s)
 
 # GNU and BSD stat and date spell mtime and epoch formatting differently.
@@ -86,10 +91,6 @@ git worktree list --porcelain | awk '/^worktree /{print $2}' | while read -r wt;
 	# Most recent chat whose transcript operated in this worktree. Match path
 	# followed by "/" or a quote so glint-482 does not match glint-482-r37.
 	last="-"; last_ts=0
-	dirs=()
-	for d in "$(project_dir "$main_wt")" "$(project_dir "$wt")"; do
-		[ -d "$d" ] && dirs+=("$d")
-	done
 	if [ "${#dirs[@]}" -gt 0 ]; then
 		f=$(mentions "${wt}/" "${wt}\"" "${dirs[@]}" | mtimes | sort -rn | head -1)
 		if [ -n "$f" ]; then last_ts=$(echo "$f" | awk '{print $1}')

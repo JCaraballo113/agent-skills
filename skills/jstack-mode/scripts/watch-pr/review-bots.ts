@@ -16,8 +16,10 @@ export interface ReviewBot {
   // When set, a comment from one of `logins` counts only if its body has one
   // of these tokens. The login also posts comments that are not reviews.
   readonly bodyTokens?: readonly string[];
-  // Body markers that name one review pass. A thread without one falls back
-  // to the id of the GitHub review it belongs to.
+  // Body markers that name one review pass. A bot without any falls back to
+  // the id of the GitHub review a thread belongs to. For a bot with markers, a
+  // thread without one has no key, and keyless threads count only when no
+  // thread of that bot has a key.
   readonly passKeys: readonly RegExp[];
   // Lowercase fragments of a pending check's name or workflow that mean this
   // bot is still reviewing.
@@ -99,7 +101,7 @@ export function reviewPassKey(
     const match = pattern.exec(comment.body);
     if (match?.[1]) return match[1];
   }
-  return comment.reviewId;
+  return bot.passKeys.length === 0 ? comment.reviewId : null;
 }
 
 export function isReviewAutomationCheck(check: {

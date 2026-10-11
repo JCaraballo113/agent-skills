@@ -24,7 +24,7 @@ Opus runs every role by default. Fable appears only as the second-opinion review
 
 ### 3. Validate
 
-Every value is one of `fable`, `opus`, `sonnet`, `haiku` or `inherit`, or a full model ID the person typed, such as `claude-opus-5-5`. If a value is anything else, stop and ask again.
+Every value is one of `fable`, `opus`, `sonnet`, `haiku` or `inherit`. The Agent tool's `model` takes only those aliases, so a full model ID would be rejected and the role would fall back to its default. If a value is anything else, stop and ask again.
 
 ### 4. Write the rule
 
@@ -41,6 +41,7 @@ perf-issue: opus
 hillclimb: opus
 judgment and prose: opus
 hardest tasks: opus
+trivial edits: sonnet
 how explorer: sonnet
 how explainer: opus
 why investigators: sonnet

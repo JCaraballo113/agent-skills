@@ -216,7 +216,7 @@ export type QueryFailure =
     }
   | {
       readonly kind: "command-exit";
-      readonly retryable: true;
+      readonly retryable: boolean;
       readonly detail: string;
       readonly code: number;
     }

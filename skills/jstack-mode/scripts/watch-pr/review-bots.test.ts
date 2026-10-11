@@ -135,6 +135,21 @@ describe("review bot threads", () => {
     ]);
   });
 
+  it("ignores a keyless Bugbot review once any Bugbot thread has a run id", () => {
+    const threads = parseReviewThreads(
+      response([
+        {
+          id: "b1",
+          login: "cursor",
+          body: "RUN_ID: run-1 severity low",
+          reviewId: "R1",
+        },
+        { id: "b2", login: "cursor", body: "severity high", reviewId: "R2" },
+      ])
+    );
+    expect(threads.map((thread) => thread.reviewBotPasses)).toEqual([1, 1]);
+  });
+
   it("renders the bot and its passes on each pretty thread line", () => {
     const threads = parseReviewThreads(
       response([

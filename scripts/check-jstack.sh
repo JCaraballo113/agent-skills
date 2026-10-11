@@ -5,10 +5,12 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 banned=(
-  'AskQuestion'
+  '\bAskQuestion\b'
   '~/\.cursor|\.cursor/'
   'grok-[0-9]'
-  'pstack-models|setup-pstack|poteto-mode|poteto-agent|/poteto-help'
+  'pstack-models|setup-pstack|[Pp]oteto'
+  '\bgt (submit|sync|restack|log|info|create|modify)\b'
+  '\borigin pr\b'
   'principle skill|\*\*principle-|principle-[a-z-]+ skill'
   'Origin (CLI|forge|API|landing)|through Origin'
   'cursor-team-kit'
@@ -25,7 +27,7 @@ banned=(
 
 status=0
 for pattern in "${banned[@]}"; do
-  if hits=$(grep -rnIE --exclude-dir=node_modules "${pattern}" skills agents | grep -vE 'AskUserQuestion' ); then
+  if hits=$(grep -rnIE --exclude-dir=node_modules "${pattern}" skills agents); then
     if [ -n "$hits" ]; then
       echo "Cursor-only term /${pattern}/ (see docs/jstack-port.md):"
       echo "$hits" | sed 's/^/  /'

@@ -973,6 +973,7 @@ export interface StackPullRequest {
   readonly headRefName: string;
   readonly baseRefName: string;
   readonly headRefOid: string;
+  readonly author: string;
 }
 
 interface StackFrontierEntry {
@@ -985,12 +986,10 @@ interface StackFrontierEntry {
 // gh's REST calls, unlike its GraphQL ones, also work from a Claude Code cloud
 // session. {owner}/{repo} is filled in from the clone's git remote.
 const REPO_PATH = "repos/{owner}/{repo}";
-// Ten pages of the newest PRs, open or not, cover any live stack.
 const STACK_PAGE_SIZE = 100;
-const STACK_PAGE_LIMIT = 10;
 // Keeps each page small enough to read through execFileSync.
 const STACK_PR_JQ =
-  "[.[] | {number, state, merged_at, head: .head.ref, base: .base.ref, sha: .head.sha, fork: (.head.repo.full_name != .base.repo.full_name)}]";
+  "[.[] | {number, state, merged_at, author: .user.login, head: .head.ref, base: .base.ref, sha: .head.sha, fork: (.head.repo.full_name != .base.repo.full_name)}]";
 
 function runInRepo({
   command,
@@ -1047,6 +1046,18 @@ function trunkBranch(repo: string): string {
   return name;
 }
 
+function viewerLogin(repo: string): string {
+  const login = runInRepo({
+    command: "gh",
+    args: ["api", "user", "--jq", ".login"],
+    repo,
+  }).trim();
+  if (login.length === 0) {
+    throw new UserError("gh api user returned no login");
+  }
+  return login;
+}
+
 function parseStackPullRequest(
   value: unknown,
   index: number
@@ -1054,11 +1065,20 @@ function parseStackPullRequest(
   if (!isRecord(value)) {
     throw new UserError(`gh api pulls output has an invalid row ${index + 1}`);
   }
-  const { number, head, base, sha, state, merged_at: mergedAt } = value;
+  const {
+    number,
+    author,
+    head,
+    base,
+    sha,
+    state,
+    merged_at: mergedAt,
+  } = value;
   if (
     typeof number !== "number" ||
     !Number.isSafeInteger(number) ||
     number <= 0 ||
+    typeof author !== "string" ||
     typeof head !== "string" ||
     typeof base !== "string" ||
     typeof sha !== "string" ||
@@ -1087,18 +1107,24 @@ function parseStackPullRequest(
     headRefName: head,
     baseRefName: base,
     headRefOid: sha,
+    author,
   };
 }
 
-function stackPullRequests(repo: string): readonly StackPullRequest[] {
+// Reads every page of one filtered pulls listing. `filter` is a query string
+// whose values are already encoded.
+function listPullRequests(
+  repo: string,
+  filter: string
+): readonly StackPullRequest[] {
   const rows: StackPullRequest[] = [];
-  for (let page = 1; page <= STACK_PAGE_LIMIT; page++) {
+  for (let page = 1; ; page++) {
     const value = parseGhJson(
       runInRepo({
         command: "gh",
         args: [
           "api",
-          `${REPO_PATH}/pulls?state=all&per_page=${STACK_PAGE_SIZE}&page=${page}`,
+          `${REPO_PATH}/pulls?${filter}&per_page=${STACK_PAGE_SIZE}&page=${page}`,
           "--jq",
           STACK_PR_JQ,
         ],
@@ -1119,10 +1145,30 @@ function stackPullRequests(repo: string): readonly StackPullRequest[] {
       }
     }
     if (value.length < STACK_PAGE_SIZE) {
-      break;
+      return rows;
     }
   }
-  return rows;
+}
+
+// The colon is encoded too, so gh's ":branch" placeholder never matches it.
+function pullRequestsWithHead(
+  repo: string,
+  head: string
+): readonly StackPullRequest[] {
+  return listPullRequests(
+    repo,
+    `head={owner}%3A${encodeURIComponent(head)}&state=all`
+  );
+}
+
+function openPullRequestsWithBase(
+  repo: string,
+  base: string
+): readonly StackPullRequest[] {
+  return listPullRequests(
+    repo,
+    `base=${encodeURIComponent(base)}&state=open`
+  );
 }
 
 const STATE_RANK: Readonly<Record<FrontierPrState, number>> = {
@@ -1150,32 +1196,27 @@ function pullRequestByHead(
   return byHead;
 }
 
-// Walks the stack that holds the checked-out branch, bottom to top. Down
-// through each PR's base until the trunk, whatever each PR's state, then up
-// through the open PRs based on a branch already in the stack. On the trunk
-// itself it walks every open stack. Merged and closed PRs above the branch are
-// history, not stack.
+// Walks the stack that holds the checked-out branch, bottom to top, one hop
+// per lookup. Down through each PR's base until the trunk, whatever each PR's
+// state, then up through the open PRs based on a branch already in the stack.
+// On the trunk itself it walks every open stack the viewer opened. Merged and
+// closed PRs above the branch are history, not stack.
 export function walkStack({
   branch,
   trunk,
-  rows,
+  viewer,
+  withHead,
+  openWithBase,
 }: {
   branch: string;
   trunk: string;
-  rows: readonly StackPullRequest[];
+  viewer: () => string;
+  withHead: (head: string) => readonly StackPullRequest[];
+  openWithBase: (base: string) => readonly StackPullRequest[];
 }): readonly StackPullRequest[] {
-  const byHead = pullRequestByHead(rows);
-  const children = new Map<string, StackPullRequest[]>();
-  for (const row of byHead.values()) {
-    children.set(row.baseRefName, [
-      ...(children.get(row.baseRefName) ?? []),
-      row,
-    ]);
-  }
-  for (const list of children.values()) {
-    list.sort((a, b) => a.pr - b.pr);
-  }
-  const start = branch === trunk ? undefined : byHead.get(branch);
+  const pullRequestFor = (head: string): StackPullRequest | undefined =>
+    pullRequestByHead(withHead(head)).get(head);
+  const start = branch === trunk ? undefined : pullRequestFor(branch);
   if (branch !== trunk && start === undefined) {
     throw new UserError(
       `branch ${branch} has no pull request; open one with gh pr create, or run from a branch whose PR is in the stack`
@@ -1184,26 +1225,38 @@ export function walkStack({
   const seen = new Set<string>([trunk]);
   const down: StackPullRequest[] = [];
   let current = start;
-  while (current !== undefined && !seen.has(current.headRefName)) {
+  while (current !== undefined) {
     seen.add(current.headRefName);
     down.push(current);
-    current =
-      current.baseRefName === trunk
-        ? undefined
-        : byHead.get(current.baseRefName);
+    const base = current.baseRefName;
+    if (seen.has(base)) {
+      break;
+    }
+    const parent = pullRequestFor(base);
+    if (parent === undefined) {
+      throw new UserError(
+        `PR #${current.pr} is based on ${base}, which has no pull request; open one for ${base}, or retarget PR #${current.pr} onto ${trunk}`
+      );
+    }
+    current = parent;
   }
   const up: StackPullRequest[] = [];
-  const visit = (head: string): void => {
-    for (const child of children.get(head) ?? []) {
+  const visit = (children: readonly StackPullRequest[]): void => {
+    for (const child of [...children].sort((a, b) => a.pr - b.pr)) {
       if (child.state !== "OPEN" || seen.has(child.headRefName)) {
         continue;
       }
       seen.add(child.headRefName);
       up.push(child);
-      visit(child.headRefName);
+      visit(openWithBase(child.headRefName));
     }
   };
-  visit(start?.headRefName ?? trunk);
+  if (start === undefined) {
+    const login = viewer();
+    visit(openWithBase(trunk).filter((row) => row.author === login));
+  } else {
+    visit(openWithBase(start.headRefName));
+  }
   return [...down.reverse(), ...up];
 }
 
@@ -1211,7 +1264,9 @@ function stackFrontier(repo: string): readonly StackFrontierEntry[] {
   const rows = walkStack({
     branch: currentBranch(repo),
     trunk: trunkBranch(repo),
-    rows: stackPullRequests(repo),
+    viewer: () => viewerLogin(repo),
+    withHead: (head) => pullRequestsWithHead(repo, head),
+    openWithBase: (base) => openPullRequestsWithBase(repo, base),
   });
   return rows.map((row) => ({
     pr: row.pr,

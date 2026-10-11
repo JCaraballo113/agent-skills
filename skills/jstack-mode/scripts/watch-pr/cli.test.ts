@@ -1,5 +1,6 @@
 import { describe, expect, it } from "bun:test";
 import { type CliRuntime, main, parseArgs } from "./cli.ts";
+import { WatcherQueryError, commandFailure } from "./github.ts";
 import { fakeReader, passingCheck } from "./fakes.test-helper.ts";
 import { renderJson, renderPretty } from "./render.ts";
 import type { GitHubReader, WatcherVerdict } from "./types.ts";
@@ -212,6 +213,49 @@ describe("main", () => {
         ci: { kind: "ci-github-rejected" },
       },
     });
+  });
+
+  it("exits 7 at once when GitHub GraphQL is unavailable to the session", async () => {
+    const base = fakeReader();
+    const reader = {
+      ...base,
+      async pullRequest() {
+        throw new WatcherQueryError(
+          commandFailure(["gh", "pr", "view"], {
+            code: 1,
+            stdout: "",
+            stderr:
+              "HTTP 403: GitHub GraphQL is not available from Claude Code sessions\n",
+          })
+        );
+      },
+    } satisfies GitHubReader;
+    const harness = testRuntime(reader);
+    const code = await main(
+      ["--owner", "owner", "--repo", "repo", "--pr", "1", "--status-only"],
+      harness.runtime
+    );
+    expect(code).toBe(7);
+    expect(harness.stdout).toHaveLength(1);
+    expect(JSON.parse(harness.stdout[0])).toMatchObject({
+      kind: "BLOCKER",
+      exitCode: 7,
+      blocker: {
+        kind: "status-query",
+        failures: 1,
+        failure: { kind: "command-exit", retryable: false },
+      },
+    });
+  });
+
+  it("keeps other gh failures retryable", () => {
+    expect(
+      commandFailure(["gh", "pr", "view"], {
+        code: 1,
+        stdout: "",
+        stderr: "HTTP 502: Bad Gateway\n",
+      })
+    ).toMatchObject({ kind: "command-exit", retryable: true });
   });
 
   it("shows help without touching the reader", async () => {

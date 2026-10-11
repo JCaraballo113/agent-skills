@@ -60,16 +60,25 @@ function parseJson(text: string, label: string): unknown {
     });
   }
 }
+// GitHub refuses GraphQL to Claude Code cloud sessions with a 403 that no
+// retry clears, so that failure ends the watch at once instead of backing off.
+const PERMANENT_FAILURES = ["GraphQL is not available"] as const;
+export function commandFailure(
+  argv: readonly [string, ...string[]],
+  result: CommandResult
+): T.QueryFailure {
+  return {
+    kind: "command-exit",
+    retryable: !PERMANENT_FAILURES.some((text) => result.stderr.includes(text)),
+    code: result.code,
+    detail:
+      firstLine(result.stderr) || `${argv.join(" ")} exited ${result.code}`,
+  };
+}
 async function runJson(argv: readonly [string, ...string[]]): Promise<unknown> {
   const result = await run(argv);
   if (result.code !== 0)
-    throw new WatcherQueryError({
-      kind: "command-exit",
-      retryable: true,
-      code: result.code,
-      detail:
-        firstLine(result.stderr) || `${argv.join(" ")} exited ${result.code}`,
-    });
+    throw new WatcherQueryError(commandFailure(argv, result));
   return parseJson(result.stdout, argv.join(" "));
 }
 function raw(value: unknown): string {
