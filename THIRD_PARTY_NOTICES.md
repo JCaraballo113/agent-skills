@@ -1,6 +1,6 @@
 # Third-party notices
 
-The jstack skills (`skills/jstack-mode` and the skills it routes to) are ported from [pstack](https://github.com/cursor/plugins/tree/main/pstack) 0.15.17 by Lauren Tan. `deslop`, `control-ui` and `control-cli` come from [cursor-team-kit](https://github.com/cursor/plugins/tree/main/cursor-team-kit). Both are MIT licensed:
+The jstack skills (`skills/jstack-mode` and the skills it routes to) are ported from [pstack](https://github.com/cursor/plugins/tree/main/pstack) 0.15.25 by Lauren Tan. `deslop`, `control-ui` and `control-cli` come from [cursor-team-kit](https://github.com/cursor/plugins/tree/main/cursor-team-kit). Both are MIT licensed:
 
 ## pstack
 

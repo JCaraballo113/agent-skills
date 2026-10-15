@@ -105,8 +105,9 @@ claude --agent agent-skills:jstack-agent  # keep the mode on for a whole session
 | [figure-it-out](./skills/figure-it-out/SKILL.md), [show-me-your-work](./skills/show-me-your-work/SKILL.md) | Design a bespoke run for large or unattended work, with a decision log to audit later. |
 | [reflect](./skills/reflect/SKILL.md), [correct](./skills/correct/SKILL.md), [automate-me](./skills/automate-me/SKILL.md) | Learn from sessions: improve skills, make repeated mistakes structurally impossible, generate your own mode. |
 | [ketchup](./skills/ketchup/SKILL.md), [bro](./skills/bro/SKILL.md) | Catch up on the chat, or restate the last message in plain words. |
+| [sharpen](./skills/sharpen/SKILL.md), [in-your-own-words](./skills/in-your-own-words/SKILL.md) | Before work starts, aim the task the way an expert would, or play back the goal and the problem. |
 
-Two agents ship with it: `jstack-agent`, the subagent every playbook delegates to, and `comment-sicko`, which the no-comments skill spawns. `jstack-reader` is the read-only worker for explorers and reviewers. The scripts need [Bun](https://bun.sh) and the GitHub CLI.
+Two agents ship with it: `jstack-agent`, the subagent every playbook delegates to (the chat running jstack-mode stays the runner), and `comment-sicko`, which the no-comments skill spawns. `jstack-reader` is the read-only worker for explorers and reviewers. The scripts need [Bun](https://bun.sh) and the GitHub CLI.
 
 jstack is written for Claude Code's Agent tool and plugin agents. Codex loads its skills too, but their subagent steps assume Claude Code.
 
