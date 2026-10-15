@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { parseReviewThreads } from "./github.ts";
+import { buildReviewThreads, parseReviewThreadPage } from "./github.ts";
 import { pendingCheck, fakeReader } from "./fakes.test-helper.ts";
 import { readSnapshot } from "./policy.ts";
 import { renderPretty } from "./render.ts";
@@ -20,6 +20,7 @@ function response(threads: readonly ThreadFixture[]) {
       repository: {
         pullRequest: {
           reviewThreads: {
+            pageInfo: { hasNextPage: false, endCursor: null },
             nodes: threads.map((thread) => ({
               id: thread.id,
               isResolved: thread.isResolved ?? false,
@@ -50,6 +51,9 @@ function response(threads: readonly ThreadFixture[]) {
     },
   };
 }
+
+const parseReviewThreads = (value: unknown) =>
+  buildReviewThreads(parseReviewThreadPage(value).threads);
 
 const comment = (authorLogin: string | null, body = "finding") => ({
   authorLogin,

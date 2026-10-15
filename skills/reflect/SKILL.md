@@ -23,7 +23,7 @@ The first path is the conversation. The rest are its subagents' transcripts, wor
 
 One message, three Agent calls, `subagent_type: "agent-skills:jstack-reader"`. It cannot edit files but keeps MCP access, which reviewers need to look up the tickets, chat threads, and observability traces the transcript references.
 
-Each reviewer and the synthesizer name a role line in `~/.claude/rules/jstack-models.md` and a default. Set `model` to that line's value, or to the default if the rule or the line is missing. Leave `model` unset when the value is `inherit`. If the Agent tool rejects a value, use the default and say so.
+Each reviewer and the synthesizer name a role line in `~/.claude/rules/jstack-models.md` and a default. Set `model` to that line's value, or to the default if the rule or the line is missing. Leave `model` unset when the value is `inherit`. If the Agent tool rejects a value, use the default and say so. Pick each subagent's `effort` for the job, per the Subagents section of the **jstack-mode** skill.
 
 | Lens | Role line | Default `model` | Prompt template |
 |---|---|---|---|

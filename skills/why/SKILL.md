@@ -7,7 +7,7 @@ description: "Investigates why code is shaped the way it is. Discovers available
 
 Investigate the motivation and intent behind code. The companion `how` skill answers what the code does and how it works. `why` answers what forces led to its shape.
 
-Each spawn below names a role line in `~/.claude/rules/jstack-models.md` and a default. Set `model` to that line's value, or to the default if the rule or the line is missing. Leave `model` unset when the value is `inherit`. If the Agent tool rejects a value, use the default and say so.
+Each spawn below names a role line in `~/.claude/rules/jstack-models.md` and a default. Set `model` to that line's value, or to the default if the rule or the line is missing. Leave `model` unset when the value is `inherit`. If the Agent tool rejects a value, use the default and say so. Pick each subagent's `effort` for the job, per the Subagents section of the **jstack-mode** skill.
 
 Every spawn is an Agent call with `subagent_type: "agent-skills:jstack-reader"`. It cannot edit files but keeps MCP access, which the MCP-backed investigators and the synthesizer's citation spot-checks need. Investigators still shouldn't write anything.
 

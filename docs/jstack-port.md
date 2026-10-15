@@ -1,6 +1,6 @@
 # jstack: the pstack port
 
-jstack is [pstack](https://github.com/cursor/plugins/tree/main/pstack) 0.15.17 (Lauren Tan, MIT) ported from Cursor to Claude Code. `jstack-mode` is the entry skill. It matches a task to one of its playbooks and calls the other jstack skills as the steps need them. The port keeps pstack's wording and rules. It changes only what Cursor does differently from Claude Code, listed below, so a later sync with upstream can re-apply the same edits.
+jstack is [pstack](https://github.com/cursor/plugins/tree/main/pstack) 0.15.25 (Lauren Tan, MIT) ported from Cursor to Claude Code. `jstack-mode` is the entry skill. It matches a task to one of its playbooks and calls the other jstack skills as the steps need them. The port keeps pstack's wording and rules. It changes only what Cursor does differently from Claude Code, listed below, so a later sync with upstream can re-apply the same edits. The first import was 0.15.17 (upstream commit `978ca6e`). The last sync brought in upstream through 0.15.25 (`6ce45c5`).
 
 `scripts/check-jstack.sh` fails on any Cursor-only term left in `skills/` or `agents/`. Run it after every edit to a jstack file.
 
@@ -28,6 +28,7 @@ jstack is [pstack](https://github.com/cursor/plugins/tree/main/pstack) 0.15.17 (
 | `environment: "cloud"` | `isolation: "remote"` when the Agent tool offers it, else `isolation: "worktree"` |
 | `environment: "local"` | No `isolation`, or `isolation: "worktree"` when the worker edits files |
 | A model slug such as `claude-opus-5-5-xhigh` | `model: "fable"`, `"opus"`, `"sonnet"` or `"haiku"`. Omit `model` to inherit the parent's. |
+| A subagent's reasoning level, and fast or standard speed (the slug's `-xhigh` and `-fast` suffixes) | The Agent call's `effort` (`low` to `max`). Claude Code has no per-subagent fast mode, so speed is dropped. |
 | `AskQuestion` | `AskUserQuestion` |
 | Cursor's `/loop` | The bundled `/loop` skill. Omit the interval to self-pace. |
 | A Custom Mode's skill loading | `jstack-agent` preloads jstack-mode through its `skills:` frontmatter, which needs the plugin-qualified name `agent-skills:jstack-mode`. |
@@ -41,6 +42,9 @@ jstack is [pstack](https://github.com/cursor/plugins/tree/main/pstack) 0.15.17 (
 | Landing through Origin | `gh` only |
 | Graphite `gt` | `git` and `gh` |
 | A Cursor restart | A Claude Code restart or session end |
+| Cursor's `/visualize` chart, and screenshots embedded inline | A Mermaid diagram, an ASCII diagram in a code block, or a chart. In a terminal, screenshots and videos are linked by path or URL. |
+| `poteto-agent` as a delegate only, since a Cursor subagent has no Task tool | `jstack-agent` is a delegate and can also run a whole session through `claude --agent`. A playbook never spawns one to run the playbook itself. |
+| The `orch frontier set` base-chain walk with `--forge origin` | The port's own `gh` REST stack walk, kept as is |
 
 ## Paths
 
@@ -48,7 +52,7 @@ Inside a SKILL.md, `${CLAUDE_SKILL_DIR}` is that skill's folder and `${CLAUDE_PL
 
 ## Invocation
 
-pstack hid 51 of its 52 skills from the model. In Claude Code, `disable-model-invocation: true` also stops the model and other skills from invoking a skill, so jstack-mode could not run `how` and a routine could not run `deslop`. jstack therefore keeps every routed skill model-invocable, with a description that says when to use it. Only the skills a person runs by hand keep the flag: `setup-jstack`, `jstack-help`, `automate-me`, `ketchup` and `bro`.
+pstack hid 51 of its 52 skills from the model. In Claude Code, `disable-model-invocation: true` also stops the model and other skills from invoking a skill, so jstack-mode could not run `how` and a routine could not run `deslop`. jstack therefore keeps every routed skill model-invocable, with a description that says when to use it. Only the skills a person runs by hand keep the flag: `setup-jstack`, `jstack-help`, `automate-me`, `ketchup`, `bro`, `sharpen` and `in-your-own-words`.
 
 ## Model roles
 

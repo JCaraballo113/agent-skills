@@ -63,11 +63,13 @@ The default answer is `/agent-skills:jstack-mode`, which runs most of the others
 | The user wants to | Skill |
 |---|---|
 | Do any non-trivial task with rigor | [`/agent-skills:jstack-mode`](../jstack-mode/SKILL.md) |
+| Check that the agent understood their goal and the problem before it starts | [`/agent-skills:in-your-own-words`](../in-your-own-words/SKILL.md) |
+| Aim a task higher before starting: more expert, more outcome-focused, not overspecified | [`/agent-skills:sharpen`](../sharpen/SKILL.md) |
 | Know how code works now, or where new code should live | [`/agent-skills:how`](../how/SKILL.md) |
 | Know why code is shaped this way, or where a number came from | [`/agent-skills:why`](../why/SKILL.md) |
 | Understand a change or subsystem, explained plainly | [`/agent-skills:teach`](../teach/SKILL.md) |
 | Catch up on their own recent work on a topic | [`/agent-skills:recall`](../recall/SKILL.md) |
-| Catch up on everything in this chat since their last message, with enough context to decide each action item | [`/agent-skills:ketchup`](../ketchup/SKILL.md) |
+| Catch up on what changed in this chat since their last message, in a few plain sentences and small visuals, with enough context to decide each action item | [`/agent-skills:ketchup`](../ketchup/SKILL.md) |
 | Know what a small diff could break outside itself | [`/agent-skills:blast-radius`](../blast-radius/SKILL.md) |
 | Settle types and module shape before code that crosses a function boundary | [`/agent-skills:architect`](../architect/SKILL.md) |
 | Get several attempts at one brief, merged into the best one | [`/agent-skills:arena`](../arena/SKILL.md) |
