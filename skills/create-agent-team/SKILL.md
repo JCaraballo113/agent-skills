@@ -42,6 +42,7 @@ Each prompt:
 - names its trigger, its single job, and what it leaves to other roles;
 - picks work idempotently: skips what another run has claimed (a label, or a "checking" comment on the head sha from the last few hours) and what is already judged (a verdict naming the current head sha);
 - spells out the GitHub calls the environment allows (cloud sessions block GraphQL: `gh api` REST, long bodies via `-F body=@<file>`);
+- runs a pstack skill by reading its `SKILL.md` from pstack's folder, with the paragraph ship.md and gate.md carry: pstack's skills refuse the Skill tool, so a run told to use `/pstack:<name>` can't start it;
 - ends on guardrails: what it may push, never `--force`, anything the repo forbids.
 
 The gate's hold rules need three things exact:

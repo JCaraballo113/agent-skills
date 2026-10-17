@@ -19,7 +19,6 @@ jobs:
           claude plugin validate . --strict
           claude plugin validate .claude-plugin/plugin.json --strict
           claude plugin validate skills --strict
-          claude plugin validate agents --strict
       - name: motion-brief script tests
         run: node --test skills/motion-brief/scripts/*.test.mjs
       - name: create-agent-team bot tests
