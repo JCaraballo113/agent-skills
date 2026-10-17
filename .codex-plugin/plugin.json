@@ -1,7 +1,7 @@
 {
   "name": "agent-skills",
-  "version": "4.4.0",
-  "description": "Agent skills for project setup and UX, plus jstack: a ported pstack working style with playbooks, principles and review panels.",
+  "version": "5.0.0",
+  "description": "Agent skills for project setup, UX, design tooling and agent teams.",
   "author": {
     "name": "John Caraballo",
     "email": "jcaraballo.dev@gmail.com",
@@ -12,15 +12,15 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Agent Skills",
-    "shortDescription": "Project setup, UX and the jstack working style.",
-    "longDescription": "A personal collection of agent skills for project setup and UX, plus jstack, a port of pstack's playbook-driven working style.",
+    "shortDescription": "Project setup, UX, design tooling and agent teams.",
+    "longDescription": "A personal collection of agent skills for project setup, UX, design tooling and agent teams.",
     "developerName": "John Caraballo",
     "category": "Productivity",
     "capabilities": ["Write"],
     "defaultPrompt": [
       "Set up this project with my preferred tooling.",
-      "Babysit this PR until it's merge-ready.",
-      "Fix this bug: repro first, then prove the fix."
+      "Deslop this branch.",
+      "Find where users get stuck in this flow."
     ]
   }
 }

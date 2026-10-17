@@ -1,7 +1,7 @@
 {
   "name": "agent-skills",
-  "description": "Agent skills for project setup and UX, plus jstack: a ported pstack working style with playbooks, principles and review panels.",
-  "version": "4.4.0",
+  "description": "Agent skills for project setup, UX, design tooling and agent teams.",
+  "version": "5.0.0",
   "author": {
     "name": "John Caraballo",
     "email": "jcaraballo.dev@gmail.com"

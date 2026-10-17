@@ -1,6 +1,6 @@
 # The conflicts routine's prompt
 
-Conflicts keeps Ship's other open PRs mergeable after one merges: it merges the default branch into each `claude/` PR that now conflicts, resolves the conflict, proves it, and pushes. It judges nothing and merges nothing; the gate's next hourly run checks the updated PR, since its new head sha has no verdict. Merging in (GitHub's Update branch) rather than rebasing means a plain push, never a force-push: an unattended run can't ask, and two runs racing on one branch get a rejected push instead of one overwriting the other. jstack's Babysit playbook reports a conflict instead of resolving it, so this routine keeps its own steps rather than routing through Babysit.
+Conflicts keeps Ship's other open PRs mergeable after one merges: it merges the default branch into each `claude/` PR that now conflicts, resolves the conflict, proves it, and pushes. It judges nothing and merges nothing; the gate's next hourly run checks the updated PR, since its new head sha has no verdict. Merging in (GitHub's Update branch) rather than rebasing means a plain push, never a force-push: an unattended run can't ask, and two runs racing on one branch get a rejected push instead of one overwriting the other. pstack's Babysit playbook reports a conflict instead of resolving it, so this routine keeps its own steps rather than routing through Babysit.
 
 **Trigger.** The creator's own routine, created in the claude.ai routines form: a pull request merging into `<default branch>` (the form's PR merged trigger, filtered to that base branch).
 

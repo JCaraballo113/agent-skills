@@ -13,7 +13,6 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: 22
-      - uses: oven-sh/setup-bun@v2
       - name: Validate plugin
         run: |
           npm install -g @anthropic-ai/claude-code
@@ -21,15 +20,7 @@ jobs:
           claude plugin validate .claude-plugin/plugin.json --strict
           claude plugin validate skills --strict
           claude plugin validate agents --strict
-      - name: No Cursor-only terms in jstack
-        run: scripts/check-jstack.sh
       - name: motion-brief script tests
         run: node --test skills/motion-brief/scripts/*.test.mjs
       - name: create-agent-team bot tests
         run: node --test skills/create-agent-team/bots/*.test.mjs
-      - name: jstack script tests
-        working-directory: skills/jstack-mode/scripts
-        run: |
-          bun install --frozen-lockfile
-          bun run test
-          bun run typecheck

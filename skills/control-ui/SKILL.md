@@ -1,6 +1,6 @@
 ---
 name: control-ui
-description: Build or adapt a local browser/CDP harness to drive and inspect a web, IDE, or Electron UI. Use for local UI verification, screenshots, accessibility snapshots, perf profiles, visual diffs, reproducing UI bugs, or when jstack-mode's playbook step needs a browser, Electron, or web UI driven on its real surface.
+description: Build or adapt a local browser/CDP harness to drive and inspect a web, IDE, or Electron UI. Use for local UI verification, screenshots, accessibility snapshots, perf profiles, visual diffs, reproducing UI bugs, or when a pstack poteto-mode playbook step needs a browser, Electron, or web UI driven on its real surface.
 ---
 
 # Control UI

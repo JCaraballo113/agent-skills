@@ -1,6 +1,6 @@
 ---
 name: control-cli
-description: Build or adapt a local harness to drive, inspect, and profile an interactive CLI or TUI without external services. Use for CLI UX checks, startup regressions, memory leaks, hangs, prompt flows, terminal demos, or when jstack-mode's playbook step needs a CLI or TUI driven on its real surface.
+description: Build or adapt a local harness to drive, inspect, and profile an interactive CLI or TUI without external services. Use for CLI UX checks, startup regressions, memory leaks, hangs, prompt flows, terminal demos, or when a pstack poteto-mode playbook step needs a CLI or TUI driven on its real surface.
 ---
 
 # Control CLI
