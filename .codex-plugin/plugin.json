@@ -1,6 +1,6 @@
 {
   "name": "agent-skills",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "Agent skills for project setup, UX, design tooling and agent teams.",
   "author": {
     "name": "John Caraballo",
