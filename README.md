@@ -60,7 +60,7 @@ Skills live under [`skills/`](./skills) and are shared by the Claude Code and Co
 | [agent-rules](./skills/agent-rules/SKILL.md) | Encode working conventions by concern in the host's native checked-in instruction format — testing (TDD, happy/negative path, coverage as discovery), migrations, design-system (atomic vocabulary + content extremes), voice (a copy table per surface + a banned-list guard), round-trips, code-review, coding-standard-updates (a gated CODING_STANDARDS.md canon), sub-agents (model tiering), agent-summaries (debrief, not changelog) — generalized to the project, any ecosystem. |
 | [blender-character](./skills/blender-character/SKILL.md) | Build, rig and animate stylized characters in Blender via the Blender MCP as a deterministic script pipeline: metaball sculpting, computed skin weights, quadruped walk with planted feet, research-based eye animation (saccades, event-driven blinks, lid follow), mouth bag + jaw + Rhubarb lip sync, and style rules (`styles/PIXAR.md`). Headless tools in `tools/` (deformation gate with reproducibility hash, stills, renders with voice, contact sheets, native Rhubarb build); cited research in `research/`; a full worked example in `examples/gecko/`. |
 | [claude-cloud-sessions-setup](./skills/claude-cloud-sessions-setup/SKILL.md) | Set up Claude Code cloud sessions for a repo: reads its stack, pushes what the cloud must clone, drafts the cloud environment (a setup script for what the VM lacks, the user's plugins included, with a version line that rebuilds the cached machine after a plugin release), and runs a smoke session to prove the build and tests on the Linux VM. Facts in `CLOUD-FACTS.md`, deps in its `skill.deps.json`. Then offers `create-agent-team`. |
-| [create-agent-team](./skills/create-agent-team/SKILL.md) | Set up a repo's agent team on top of cloud sessions: routines that triage issues, ship them as PRs through `jstack-mode`, gate and merge PRs, keep merged PRs' siblings mergeable, keep `main` green, draw designs, post a morning board and review the playbook weekly, handing off through labels and comments and sending the creator only decisions as cards. One prompt template per role in `prompts/`; each role has a Claude bot in `bots/` (nine characters, six moods each), and in a Claude Project the morning board posts as a widget with each line spoken by its bot, animated; `scripts/shot.mjs` and `scripts/proof.sh` give runs proof a person can see. |
+| [create-agent-team](./skills/create-agent-team/SKILL.md) | Set up a repo's agent team on top of cloud sessions: routines that triage issues, ship them as PRs through pstack's `poteto-mode`, gate and merge PRs, keep merged PRs' siblings mergeable, keep `main` green, draw designs, post a morning board and review the playbook weekly, handing off through labels and comments and sending the creator only decisions as cards. One prompt template per role in `prompts/`; each role has a Claude bot in `bots/` (nine characters, six moods each), and in a Claude Project the morning board posts as a widget with each line spoken by its bot, animated; `scripts/shot.mjs` and `scripts/proof.sh` give runs proof a person can see. |
 | [clean-mac-hdd](./skills/clean-mac-hdd/SKILL.md) | Diagnose what fills a Mac's disk — measure the Data volume, attribute every large folder to its producer (regenerable cache / leak / data), report a table, then on the user's go-ahead reclaim caches and leaks and patch each leaking producer. Ships a catalog of known offenders (`OFFENDERS.md`) that grows with every run. |
 | [clean-windows-hdd](./skills/clean-windows-hdd/SKILL.md) | The Windows mirror of `clean-mac-hdd` — measure the volumes, attribute every large folder to its producer (regenerable cache / leak / data), report a table, then on the user's go-ahead reclaim and patch. Its `OFFENDERS.md` covers WSL and Docker `.vhdx` files, hibernation, WinSxS, Windows.old, package caches, emulator images. |
 | [clean-wsl](./skills/clean-wsl/SKILL.md) | Reclaim space in a WSL 2 distro across both layers: inside Linux (apt, journal, Docker, caches) and the `ext4.vhdx` on the Windows drive that grows on every write and never shrinks by itself — `fstrim`, `wsl --shutdown`, then sparse mode / `Optimize-VHD` / `diskpart` compaction. |
@@ -76,40 +76,14 @@ Skills live under [`skills/`](./skills) and are shared by the Claude Code and Co
 | [setup-js-stack](./skills/setup-js-stack/SKILL.md) | The JS/TS web stack module: TanStack Start/Vite/Hono, Query, Form, Drizzle + Docker/Supabase Postgres, Zod, Tailwind, shadcn, Vitest, GitHub CI, all on pnpm with the 1-day package-age guard. Usually composed by `setup-tooling`. |
 | [setup-tooling](./skills/setup-tooling/SKILL.md) | Orchestrator: drives an intent interview (ecosystem, platform, project type, frontend, DB, existing code), then composes the stack module(s) — `setup-js-stack` (web) and/or `setup-expo-stack` (mobile) — + `lint-guardrails` + `setup-evm-stack` (on-chain web) + `design-tooling` + `setup-animation-tooling` (illustration/animation assets) + `agent-rules`. Use to bootstrap any project. |
 
-## jstack
+## From cursor-team-kit
 
-jstack is a working style: one entry skill, `jstack-mode`, matches a task to a playbook and runs the other jstack skills as the steps need them. It is [pstack](https://github.com/cursor/plugins/tree/main/pstack) by Lauren Tan, ported from Cursor to Claude Code. [`docs/jstack-port.md`](./docs/jstack-port.md) lists every change from upstream, and `scripts/check-jstack.sh` fails on any Cursor-only term left behind.
-
-Start with:
-
-```
-/agent-skills:setup-jstack                # pick a model per role, once per machine
-/agent-skills:jstack-mode <the task>      # route one task through a playbook
-claude --agent agent-skills:jstack-agent  # keep the mode on for a whole session
-```
-
-`/agent-skills:jstack-help` answers "which skill do I want?".
+[pstack](https://github.com/cursor/plugins/tree/main/pstack) installs in Claude Code from its own marketplace (`/plugin marketplace add cursor/plugins`, then `/plugin install pstack@cursor-plugins`). Its playbooks call **deslop**, **control-ui** and **control-cli**, which come from Cursor's cursor-team-kit and have no Claude Code plugin, so they ship here.
 
 | Skill | Description |
 |---|---|
-| [jstack-mode](./skills/jstack-mode/SKILL.md) | The entry point. 23 playbooks (investigation, bug fix, feature, refactoring, perf, hillclimb, forensics, prototype, visual parity, eval, babysit, shipping, autonomous run, orchestrate, autopilot, session pickup, pause, multi-phase plans, worktree cleanup, opening a PR), 24 principles read on demand, and the `watch-pr` and `orch` scripts. |
-| [setup-jstack](./skills/setup-jstack/SKILL.md) | Writes `~/.claude/rules/jstack-models.md`: which model each role runs on. Defaults are Opus for every role, Fable as the second-opinion reviewer, and Sonnet for bulk searching. |
-| [jstack-help](./skills/jstack-help/SKILL.md) | Which jstack skill fits a question, and how to prompt the mode. |
-| [how](./skills/how/SKILL.md), [why](./skills/why/SKILL.md), [teach](./skills/teach/SKILL.md), [recall](./skills/recall/SKILL.md) | Understand code, its history and past sessions before changing anything. |
-| [architect](./skills/architect/SKILL.md), [arena](./skills/arena/SKILL.md), [swarm](./skills/swarm/SKILL.md), [interrogate](./skills/interrogate/SKILL.md) | Parallel design runs, bakeoffs, fan-out coverage and adversarial multi-model review. |
-| [blast-radius](./skills/blast-radius/SKILL.md), [benchmark-checklist](./skills/benchmark-checklist/SKILL.md) | Prove what a diff could break, and vet a measured number before anyone acts on it. |
-| [tdd](./skills/tdd/SKILL.md), [typescript-best-practices](./skills/typescript-best-practices/SKILL.md) | Failing test first; TypeScript rules scoped to `.ts` files. |
-| [deslop](./skills/deslop/SKILL.md), [no-comments](./skills/no-comments/SKILL.md), [unslop](./skills/unslop/SKILL.md), [technical-writing](./skills/technical-writing/SKILL.md) | Clean the diff and the prose before commit and review. deslop comes from Cursor's cursor-team-kit. |
-| [control-ui](./skills/control-ui/SKILL.md), [control-cli](./skills/control-cli/SKILL.md) | Drive a browser, Electron or terminal app the way a user does, for proof. From cursor-team-kit. |
-| [create-verification-skill](./skills/create-verification-skill/SKILL.md), [maintain-verification-skill](./skills/maintain-verification-skill/SKILL.md) | Generate and keep honest a project skill that drives the app and proves changes work. |
-| [figure-it-out](./skills/figure-it-out/SKILL.md), [show-me-your-work](./skills/show-me-your-work/SKILL.md) | Design a bespoke run for large or unattended work, with a decision log to audit later. |
-| [reflect](./skills/reflect/SKILL.md), [correct](./skills/correct/SKILL.md), [automate-me](./skills/automate-me/SKILL.md) | Learn from sessions: improve skills, make repeated mistakes structurally impossible, generate your own mode. |
-| [ketchup](./skills/ketchup/SKILL.md), [bro](./skills/bro/SKILL.md) | Catch up on the chat, or restate the last message in plain words. |
-| [sharpen](./skills/sharpen/SKILL.md), [in-your-own-words](./skills/in-your-own-words/SKILL.md) | Before work starts, aim the task the way an expert would, or play back the goal and the problem. |
-
-Two agents ship with it: `jstack-agent`, the subagent every playbook delegates to (the chat running jstack-mode stays the runner), and `comment-sicko`, which the no-comments skill spawns. `jstack-reader` is the read-only worker for explorers and reviewers. The scripts need [Bun](https://bun.sh) and the GitHub CLI.
-
-jstack is written for Claude Code's Agent tool and plugin agents. Codex loads its skills too, but their subagent steps assume Claude Code.
+| [deslop](./skills/deslop/SKILL.md) | Remove AI-generated slop from the branch diff against main without changing behavior. |
+| [control-ui](./skills/control-ui/SKILL.md), [control-cli](./skills/control-cli/SKILL.md) | Drive a browser, Electron or terminal app the way a user does, for proof. |
 
 ## Editing workflow
 
@@ -137,7 +111,7 @@ Add a skill by hand:
    }
    ```
 
-3. Validate: `claude plugin validate . --strict`, and `scripts/check-jstack.sh` when the skill is part of jstack. CI runs both, plus the jstack script tests.
+3. Validate: `claude plugin validate . --strict`. CI runs it, plus the skills' script tests.
 4. Commit + push, then `/plugin marketplace update jcaraballo` and `/reload-plugins`.
 
 The `description` field is what Claude uses to decide when to invoke the skill, so make it specific about the triggers (e.g. "use when user says X" / "use when Y condition").

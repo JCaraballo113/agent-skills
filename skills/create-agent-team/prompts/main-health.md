@@ -1,6 +1,6 @@
 # The main health routine's prompt
 
-Main health runs the full suite on a fresh `main` every night, so every other routine can trust its own red. When `main` is red it opens or updates a `main-red` issue and labels it `claude`, so Ship fixes it first, through jstack's Bug fix playbook, and the gate checks only that fix until `main` is green again. When `main` is green it closes the `main-red` issues whose failure is gone. It fixes nothing itself.
+Main health runs the full suite on a fresh `main` every night, so every other routine can trust its own red. When `main` is red it opens or updates a `main-red` issue and labels it `claude`, so Ship fixes it first, through pstack's Bug fix playbook, and the gate checks only that fix until `main` is green again. When `main` is green it closes the `main-red` issues whose failure is gone. It fixes nothing itself.
 
 **Trigger.** A scheduled role (SKILL.md, step 5), nightly, a minute off :00 and :30. The coordinator (outside a Project, a fresh session per fire) runs the cheap check below and starts a fresh thread on the filled prompt (e.g. `/mnt/project-files/agent-team/prompts/main-health.txt`) only when it finds work.
 

@@ -1,4 +1,5 @@
 {
+  "pstack": "/plugin marketplace add cursor/plugins, then /plugin install pstack@cursor-plugins",
   "gh": {
     "darwin": "brew install gh",
     "linux": "sudo apt install gh (other distros: https://cli.github.com)",

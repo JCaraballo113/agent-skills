@@ -1,6 +1,6 @@
 ---
 name: create-agent-team
-description: Set up a repo's agent team, routines that triage issues, ship PRs with jstack, gate merges and keep main green, each role a Claude bot, sending the creator only decisions as cards.
+description: Set up a repo's agent team, routines that triage issues, ship PRs with pstack, gate merges and keep main green, each role a Claude bot, sending the creator only decisions as cards.
 disable-model-invocation: true
 ---
 
@@ -8,15 +8,15 @@ disable-model-invocation: true
 
 An agent team is a pipeline of routines that moves work from issue to merged PR without the creator at a desk. Each routine has one job and hands off through labels and comments on GitHub, so any run picks up where another stopped and the creator reads state on GitHub, not in a session. The creator stays in the loop only at a **hold**: a decision only they can make, sent to them as a **card** they answer from their phone.
 
-The team decides when work runs and who owns it. How a run does the work is jstack's: Ship builds through the **jstack-mode** skill (its Feature or Bug fix playbook), and the gate reviews with a review skill such as **interrogate**. A routine run ends where its role ends, so jstack's own merge steps (Shipping, Autopilot) never run inside the team: the gate owns `main`.
+The team decides when work runs and who owns it. How a run does the work is [pstack](https://github.com/cursor/plugins/tree/main/pstack)'s: Ship builds through its **poteto-mode** skill (the Feature or Bug fix playbook), and the gate reviews with a review skill such as pstack's **interrogate**. A routine run ends where its role ends, so pstack's own merge steps (Shipping, Autopilot) never run inside the team: the gate owns `main`.
 
-Deps are in [skill.deps.json](skill.deps.json); when one is missing, give the user its install command for this OS and stop.
+Deps are in [skill.deps.json](skill.deps.json), pstack among them; when one is missing, give the user its install command for this OS and stop.
 
 Work through the steps in order; each ends on its completion criterion. The roles and conventions the steps build are reference at the end. The prompt templates are in [prompts/](prompts/), one per role; each role has a Claude bot in [bots/](bots/).
 
 ## 1. Survey
 
-The team runs in Claude Code cloud sessions. When the repo has no cloud environment yet, or its setup script doesn't install agent-skills, work through `${CLAUDE_PLUGIN_ROOT}/skills/claude-cloud-sessions-setup/SKILL.md` steps 1 to 4 first, then come back here.
+The team runs in Claude Code cloud sessions. When the repo has no cloud environment yet, or its setup script doesn't install agent-skills and pstack, work through `${CLAUDE_PLUGIN_ROOT}/skills/claude-cloud-sessions-setup/SKILL.md` steps 1 to 4 first, then come back here.
 
 Read before proposing anything:
 - The repo's CLAUDE.md (or AGENTS.md), contributing rules, CI workflows, and labels in use (`gh api repos/<R>/labels`).
@@ -95,7 +95,7 @@ Done when all three hold. Then tell the creator what's left for them, one line e
 |---|---|---|---|---|
 | Coordinator | Cue | always on, in a Project | starts a fresh thread for each scheduled role with work, posts the board and cards, relays answers | none (its routines' briefs, step 5) |
 | Triage | Tag | new issue, daily | sort each item into ship, design, person or done; scope one run's worth and label `claude` (queue cap about 4) | [triage.md](prompts/triage.md) |
-| Ship | Bolt | `claude` label | claim (`claude-working`), build with jstack-mode within the size limit, prove it with something a person can see, open a ready PR that `Refs` the issue; `claude-stuck` when it can't finish; then promote the next `claude-ready` | [ship.md](prompts/ship.md) |
+| Ship | Bolt | `claude` label | claim (`claude-working`), build with poteto-mode within the size limit, prove it with something a person can see, open a ready PR that `Refs` the issue; `claude-stuck` when it can't finish; then promote the next `claude-ready` | [ship.md](prompts/ship.md) |
 | Gate | Stamp | PR opened, hourly | hold or prove (merge with `main`, tests, review, fix findings), merge via `git push origin HEAD:main`, post a verdict; the hourly run sweeps a few unjudged PRs | [gate.md](prompts/gate.md) |
 | Conflicts | Mend | PR merged | merge the base into each conflicting PR and resolve it | [conflicts.md](prompts/conflicts.md) |
 | Main health | Pulse | nightly | full suite on a fresh `main`; open or close `main-red` issues and queue the fix | [main-health.md](prompts/main-health.md) |
@@ -105,7 +105,7 @@ Done when all three hold. Then tell the creator what's left for them, one line e
 
 The bots are the team's faces: [bots/art.mjs](bots/art.mjs) draws each in six moods (idle, work, done, stumped, nap, ask), [bots/board-widget.mjs](bots/board-widget.mjs) renders the morning board with them animated, and `node --test bots/*.test.mjs` checks both. Name a role by its bot wherever the creator reads it (board lines, cards' context lines).
 
-The design pass belongs only to a repo with a design hand-off. Conflicts keeps its own steps: jstack's Babysit playbook reports a conflict rather than resolving it.
+The design pass belongs only to a repo with a design hand-off. Conflicts keeps its own steps: pstack's Babysit playbook reports a conflict rather than resolving it.
 
 ## Conventions
 
